@@ -1,3 +1,5 @@
 /wordle/node_modules
 /wordle-backend/node_modules
 /wordle-backend/.env
+/wordle2/node_modules
+/wordle2/.env

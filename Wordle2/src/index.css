@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Space+Grotesk:wght@500&display=swap');
+@import "tailwindcss";
+@layer utilities {
+
+     /* Hide scrollbar for various browsers */
+     .scrollbar-hidden::-webkit-scrollbar {
+          display: none;
+     }
+
+     .scrollbar-hidden {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+     }
+}
+
+@tailwind utilities;
+@import "@theme-toggles/react/css/expand.css";

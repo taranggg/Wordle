@@ -1,0 +1,19 @@
+.flip {
+     animation: flipIn 0.3s ease forwards;
+     backface-visibility: hidden;
+     perspective: 1000px;
+}
+
+@keyframes flipIn {
+     0% {
+          transform: rotateX(0deg);
+     }
+
+     50% {
+          transform: rotateX(90deg);
+     }
+
+     100% {
+          transform: rotateX(0deg);
+     }
+}
