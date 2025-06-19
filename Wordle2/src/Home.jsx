@@ -139,7 +139,7 @@ export default function Home({ dayWord }) {
   const backgroundStyle = {
     background: isDark
       ? "linear-gradient(135deg, #232526 0%, #770101 100%)"
-      : "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+      : "linear-gradient(135deg, #a8edea 0%, #FCE8AF 100%)",
   };
 
   const homeProps = {

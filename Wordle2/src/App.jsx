@@ -3,8 +3,10 @@ import "./App.css";
 import Home from "./Home";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { useEffect, useState } from "react";
-import { Key } from "lucide-react";
 import { KeyboardProvider } from "./context/KeyboardContext.jsx";
+import { Routes, Route } from "react-router-dom";
+import Register from "./auth/Register.jsx";
+import Login from "./auth/login.jsx";
 
 function App() {
   const [dayWord, setDayWord] = useState({
@@ -45,14 +47,16 @@ function App() {
     fetchRandomWord();
   }, []);
   return (
-    <>
-      <ThemeProvider>
-        <KeyboardProvider>
-          <Toaster position="top-right" reverseOrder={false} />
-          <Home dayWord={dayWord} />
-        </KeyboardProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider>
+      <KeyboardProvider>
+        <Toaster position="top-right" reverseOrder={false} />
+        <Routes>
+          <Route path="/" element={<Home dayWord={dayWord} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </KeyboardProvider>
+    </ThemeProvider>
   );
 }
 
