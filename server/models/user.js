@@ -23,6 +23,10 @@ const userSchema=mongoose.Schema({
     },
     gender:{
         type:String,
+    },
+    avatar:{
+        type:String,
+        default:"avatarSenku.png",
     }
 },{
     timestamps:true,
