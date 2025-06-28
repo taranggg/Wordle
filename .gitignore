@@ -3,3 +3,6 @@
 /wordle-backend/.env
 /wordle2/node_modules
 /wordle2/.env
+/server/node_modules
+/server/config/config.env
+/server/package-lock.json
