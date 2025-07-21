@@ -2,6 +2,7 @@ const express=require("express");
 const dotenv=require("dotenv");
 const cors=require("cors");
 const {connectDB}=require("./config/db");
+const authRouter = require("./routes/auth");
 const app=express();
 dotenv.config({path:"./config/config.env"});
 connectDB();
@@ -12,6 +13,8 @@ app.use(express.urlencoded({extended:true}));
 app.get("/",(req,res)=>{
     res.send("Welcome to the Wordle API");
 })
+
+app.use("/api/auth",authRouter);
 
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on port ${process.env.PORT}`);
