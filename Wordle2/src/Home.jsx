@@ -1,4 +1,5 @@
 import { useState } from "react";
+import GameEndModal from "./components/GameEndModal";
 import "./Home.css";
 import GameBoard from "./components/GameBoard";
 import MenuModal from "./components/MenuModal";
@@ -20,6 +21,22 @@ function HomeMobile({
   dayWord,
   handleKeyInput,
 }) {
+  const [gameEnd, setGameEnd] = useState({
+    open: false,
+    win: false,
+    answer: "",
+  });
+
+  const handleGameEndModal = ({ result, word }) => {
+    setGameEnd({ open: true, win: result === "win", answer: word });
+    handleGameEnd && handleGameEnd({ result, word });
+  };
+
+  const handlePlayAgain = () => {
+    setGameEnd({ open: false, win: false, answer: "" });
+    window.location.reload(); // or trigger a game reset logic
+  };
+
   return (
     <div className="min-h-screen p-4 pb-24" style={backgroundStyle}>
       <MobNavBar
@@ -33,7 +50,7 @@ function HomeMobile({
       <div className="flex-1 mt-4 mb-10">
         <GameBoard
           username="Tarang"
-          onGameEnd={handleGameEnd}
+          onGameEnd={handleGameEndModal}
           isDark={isDark}
         />
       </div>
@@ -45,6 +62,13 @@ function HomeMobile({
         onClose={() => setMenuOpen(false)}
         playerId="You"
         isDark={isDark}
+      />
+
+      <GameEndModal
+        isOpen={gameEnd.open}
+        isWin={gameEnd.win}
+        answer={gameEnd.answer}
+        onPlayAgain={handlePlayAgain}
       />
     </div>
   );
@@ -60,6 +84,22 @@ function HomeDesk({
   handleGameEnd,
   dayWord,
 }) {
+  const [gameEnd, setGameEnd] = useState({
+    open: false,
+    win: false,
+    answer: "",
+  });
+
+  const handleGameEndModal = ({ result, word }) => {
+    setGameEnd({ open: true, win: result === "win", answer: word });
+    handleGameEnd && handleGameEnd({ result, word });
+  };
+
+  const handlePlayAgain = () => {
+    setGameEnd({ open: false, win: false, answer: "" });
+    window.location.reload(); // or trigger a game reset logic
+  };
+
   return (
     <div
       className="min-h-screen p-6 flex flex-col"
@@ -99,7 +139,7 @@ function HomeDesk({
       <div className="flex-1 flex flex-col items-center justify-center mt-4">
         <GameBoard
           username="Tarang"
-          onGameEnd={handleGameEnd}
+          onGameEnd={handleGameEndModal}
           isDark={isDark}
         />
       </div>
@@ -115,6 +155,13 @@ function HomeDesk({
         onClose={() => setMenuOpen(false)}
         playerId="You"
         isDark={isDark}
+      />
+
+      <GameEndModal
+        isOpen={gameEnd.open}
+        isWin={gameEnd.win}
+        answer={gameEnd.answer}
+        onPlayAgain={handlePlayAgain}
       />
     </div>
   );

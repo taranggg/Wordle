@@ -1,7 +1,8 @@
 import { Dialog } from "@headlessui/react";
 import { X, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
-import { Expand } from "@theme-toggles/react";
+
+import ThemeToggleButton from "./ThemeToggleButton";
 import avatarSenku from "../assets/avatarSenku.png";
 
 export default function ProfileModal({
@@ -75,18 +76,8 @@ export default function ProfileModal({
             </p>
           </div>
           <div className="absolute bottom-1 right-2" style={{ zIndex: 10 }}>
-            <Expand
-              toggled={isDark}
-              onToggle={toggleTheme}
-              duration={400}
-              style={{
-                color: isDark ? "#FACC15" : "#374151",
-                fontSize: "2.5rem", // Increase icon size
-                width: "2.5rem",
-                height: "2.5rem",
-              }}
-              aria-label="Toggle theme"
-            />
+            {/* Theme toggle button */}
+            <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
           </div>
         </motion.div>
       </div>
