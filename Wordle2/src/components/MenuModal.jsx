@@ -7,7 +7,13 @@ import HistorySection from "./HistorySection";
 import { useWindowDimensions } from "../hooks/dimensions";
 import WordOfTheDay from "./Wotd";
 
-export default function MenuModal({ isOpen, onClose, isDark, dayWord }) {
+export default function MenuModal({
+  isOpen,
+  onClose,
+  isDark,
+  dayWord,
+  recentGames,
+}) {
   // const [tab, setTab] = useState("leaderboard");
   const { isMobile } = useWindowDimensions();
 
@@ -92,7 +98,7 @@ export default function MenuModal({ isOpen, onClose, isDark, dayWord }) {
           </div>
           {/* Only show History content */}
           <div className="flex-1 w-full overflow-hidden">
-            <HistorySection isDark={isDark} />
+            <HistorySection isDark={isDark} recentGames={recentGames} />
           </div>
         </motion.div>
       </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GameEndModal from "./components/GameEndModal";
 import "./Home.css";
 import GameBoard from "./components/GameBoard";
@@ -17,9 +17,10 @@ function HomeMobile({
   menuOpen,
   toggleMenu,
   setMenuOpen,
-  handleGameEnd,
   dayWord,
   handleKeyInput,
+  recentGames,
+  onGameEndAddHistory,
 }) {
   const [gameEnd, setGameEnd] = useState({
     open: false,
@@ -29,7 +30,7 @@ function HomeMobile({
 
   const handleGameEndModal = ({ result, word }) => {
     setGameEnd({ open: true, win: result === "win", answer: word });
-    handleGameEnd && handleGameEnd({ result, word });
+    onGameEndAddHistory && onGameEndAddHistory({ result, word });
   };
 
   const handlePlayAgain = () => {
@@ -63,6 +64,7 @@ function HomeMobile({
         playerId="You"
         isDark={isDark}
         dayWord={dayWord}
+        recentGames={recentGames}
       />
 
       <GameEndModal
@@ -82,8 +84,9 @@ function HomeDesk({
   menuOpen,
   toggleMenu,
   setMenuOpen,
-  handleGameEnd,
   dayWord,
+  recentGames,
+  onGameEndAddHistory,
 }) {
   const [gameEnd, setGameEnd] = useState({
     open: false,
@@ -93,7 +96,7 @@ function HomeDesk({
 
   const handleGameEndModal = ({ result, word }) => {
     setGameEnd({ open: true, win: result === "win", answer: word });
-    handleGameEnd && handleGameEnd({ result, word });
+    onGameEndAddHistory && onGameEndAddHistory({ result, word });
   };
 
   const handlePlayAgain = () => {
@@ -159,6 +162,7 @@ function HomeDesk({
         playerId="You"
         isDark={isDark}
         dayWord={dayWord}
+        recentGames={recentGames}
       />
 
       <GameEndModal
@@ -175,15 +179,47 @@ export default function Home({ dayWord }) {
   const { isDark, toggleTheme } = useTheme();
   const { isMobile } = useWindowDimensions();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [recentGames, setRecentGames] = useState(() => {
+    try {
+      const stored = localStorage.getItem("recentGames");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Keep localStorage in sync with state
+  useEffect(() => {
+    localStorage.setItem("recentGames", JSON.stringify(recentGames));
+  }, [recentGames]);
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
-  const handleGameEnd = ({ result, word }) => {
-    console.log("Game ended:", result, word);
+  // Add a new game to history
+  const handleGameEndAddHistory = ({ result, word }) => {
+    const now = new Date();
+    const timeString = now.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    setRecentGames((prev) => [
+      {
+        id: prev.length ? prev[0].id + 1 : 1,
+        word: word.toUpperCase(),
+        time: timeString,
+        status: result === "win" ? "WON" : "LOST",
+        result: result === "win" ? "✔" : "✗",
+        points: result === "win" ? "+100 points" : "+10 points",
+        duration: "-",
+        colors: [],
+      },
+      ...prev,
+    ]);
   };
 
   const handleKeyInput = (key) => {
-    console.log("Key pressed from screen:", key);
     // TODO: forward this to GameBoard if needed
   };
 
@@ -200,9 +236,10 @@ export default function Home({ dayWord }) {
     menuOpen,
     toggleMenu,
     setMenuOpen,
-    handleGameEnd,
     dayWord,
     handleKeyInput,
+    recentGames,
+    onGameEndAddHistory: handleGameEndAddHistory,
   };
 
   return isMobile ? <HomeMobile {...homeProps} /> : <HomeDesk {...homeProps} />;
