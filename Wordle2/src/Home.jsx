@@ -45,7 +45,7 @@ function HomeMobile({
         toggleTheme={toggleTheme}
       />
 
-      <WordOfTheDay dayWord={dayWord} isDark={isDark} />
+      {/* <WordOfTheDay dayWord={dayWord} isDark={isDark} /> */}
 
       <div className="flex-1 mt-4 mb-10">
         <GameBoard
@@ -62,6 +62,7 @@ function HomeMobile({
         onClose={() => setMenuOpen(false)}
         playerId="You"
         isDark={isDark}
+        dayWord={dayWord}
       />
 
       <GameEndModal
@@ -128,12 +129,14 @@ function HomeDesk({
         />
       </div>
 
-      {/* Word of the Day */}
+      {/* Word of the Day moved to sidebar */}
+      {/*
       <WordOfTheDay
         dayWord={dayWord}
         isDark={isDark}
         buttonPosition={{ left: "2.5rem", top: "6rem" }}
       />
+      */}
 
       {/* Game Board */}
       <div className="flex-1 flex flex-col items-center justify-center mt-4">
@@ -155,6 +158,7 @@ function HomeDesk({
         onClose={() => setMenuOpen(false)}
         playerId="You"
         isDark={isDark}
+        dayWord={dayWord}
       />
 
       <GameEndModal
