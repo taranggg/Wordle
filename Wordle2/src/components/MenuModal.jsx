@@ -2,12 +2,19 @@ import { Dialog } from "@headlessui/react";
 import { Trophy, History, X } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import LeaderboardSection from "./LeaderBoard";
+// import LeaderboardSection from "./LeaderBoard";
 import HistorySection from "./HistorySection";
 import { useWindowDimensions } from "../hooks/dimensions";
+import WordOfTheDay from "./Wotd";
 
-export default function MenuModal({ isOpen, onClose, isDark }) {
-  const [tab, setTab] = useState("leaderboard");
+export default function MenuModal({
+  isOpen,
+  onClose,
+  isDark,
+  dayWord,
+  recentGames,
+}) {
+  // const [tab, setTab] = useState("leaderboard");
   const { isMobile } = useWindowDimensions();
 
   const mobileVariants = {
@@ -61,8 +68,9 @@ export default function MenuModal({ isOpen, onClose, isDark }) {
             <X className="w-6 h-6" />
           </button>
 
-          {/* Toggle Tabs */}
+          {/* Only show History tab for now */}
           <div className="flex bg-white/10 rounded-full overflow-hidden mb-4 w-fit mx-auto p-1 shadow-inner">
+            {/*
             <button
               onClick={() => setTab("leaderboard")}
               className={`px-5 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm ${
@@ -74,26 +82,23 @@ export default function MenuModal({ isOpen, onClose, isDark }) {
               <Trophy className="w-5 h-5" />
               Leaderboard
             </button>
+            */}
             <button
-              onClick={() => setTab("history")}
-              className={`px-5 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm ${
-                tab === "history"
-                  ? "bg-green-600 text-white shadow-md"
-                  : "text-gray-300"
-              } rounded-full`}
+              className={`px-5 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm bg-green-600 text-white shadow-md rounded-full`}
+              disabled
             >
               <History className="w-5 h-5" />
               History
             </button>
           </div>
 
-          {/* Content */}
+          {/* Word of the Day at the top of sidebar */}
+          <div className="mb-4 flex justify-center">
+            <WordOfTheDay isDark={isDark} dayWord={dayWord} />
+          </div>
+          {/* Only show History content */}
           <div className="flex-1 w-full overflow-hidden">
-            {tab === "leaderboard" ? (
-              <LeaderboardSection isDark={isDark} />
-            ) : (
-              <HistorySection isDark={isDark} />
-            )}
+            <HistorySection isDark={isDark} recentGames={recentGames} />
           </div>
         </motion.div>
       </div>

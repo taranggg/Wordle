@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Menu, User } from "lucide-react";
 import wordleLogo from "../assets/wordlelogo.png";
-import ProfileModal from "./ProfileModal";
+// import ProfileModal from "./ProfileModal";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 // Mobile NavBar with logo
 export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
   const iconColor = isDark ? "#fff" : "#222";
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  // const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <>
@@ -32,17 +33,11 @@ export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
           />
         </div>
 
-        {/* Profile Icon */}
-        <button
-          onClick={() => setIsProfileOpen(true)}
-          className="hover:bg-black/10 dark:hover:bg-white/10 p-2 rounded-full transition"
-          aria-label="Profile"
-        >
-          <User className="w-6 h-6" color={iconColor} />
-        </button>
+        {/* Theme Toggle replaces Profile Icon */}
+        <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
       </nav>
 
-      {/* Profile Modal */}
+      {/*
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
@@ -50,6 +45,7 @@ export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
         isDark={isDark}
         toggleTheme={toggleTheme}
       />
+      */}
     </>
   );
 }
@@ -71,10 +67,13 @@ export function MenuButton({ onClick, isDark }) {
 // Desktop Profile Button
 export function ProfileButton({ isDark, user, toggleTheme }) {
   const iconColor = isDark ? "#fff" : "#222";
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  // const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <>
+      {/* Theme Toggle replaces Profile Button */}
+      <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
+      {/*
       <button
         onClick={() => setIsProfileOpen(true)}
         className="hover:bg-black/10 dark:hover:bg-white/10 p-2 rounded-full transition"
@@ -89,6 +88,7 @@ export function ProfileButton({ isDark, user, toggleTheme }) {
         isDark={isDark}
         toggleTheme={toggleTheme}
       />
+      */}
     </>
   );
 }
