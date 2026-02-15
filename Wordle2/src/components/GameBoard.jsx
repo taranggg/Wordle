@@ -47,6 +47,7 @@ export default function GameBoard({
   onGameEnd,
   isDark,
   useDailyWord = false,
+  isGuest = false,
 }) {
   const [targetWord, setTargetWord] = useState("");
   const [guesses, setGuesses] = useState([]);
@@ -78,8 +79,15 @@ export default function GameBoard({
     }
   }, [keyPressed, resetKey, gameOver, isSubmitting, currentInput]);
 
-  const availableHintCount =
-    guesses.length >= 4 ? 2 : guesses.length >= 2 ? 1 : 0;
+  const availableHintCount = isGuest
+    ? guesses.length >= 2
+      ? 1
+      : 0
+    : guesses.length >= 4
+      ? 2
+      : guesses.length >= 2
+        ? 1
+        : 0;
 
   useEffect(() => {
     if (useDailyWord) {

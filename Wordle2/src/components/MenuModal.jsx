@@ -89,47 +89,53 @@ export default function MenuModal({
             <X className="w-6 h-6" />
           </button>
 
-          <div className="flex bg-white/10 rounded-full overflow-hidden mb-4 w-fit mx-auto p-1 shadow-inner">
-            <button
-              type="button"
-              onClick={() => setTab("history")}
-              className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
-                tab === "history"
-                  ? "bg-green-600 text-white shadow-md"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              <History className="w-4 h-4" />
-              History
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("leaderboard")}
-              className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
-                tab === "leaderboard"
-                  ? "bg-green-600 text-white shadow-md"
-                  : "text-gray-300 hover:text-white"
-              }`}
-            >
-              <Trophy className="w-4 h-4" />
-              Leaderboard
-            </button>
-          </div>
+          {!isGuest && (
+            <>
+              <div className="flex bg-white/10 rounded-full overflow-hidden mb-4 w-fit mx-auto p-1 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setTab("history")}
+                  className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
+                    tab === "history"
+                      ? "bg-green-600 text-white shadow-md"
+                      : "text-gray-300 hover:text-white"
+                  }`}
+                >
+                  <History className="w-4 h-4" />
+                  History
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTab("leaderboard")}
+                  className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
+                    tab === "leaderboard"
+                      ? "bg-green-600 text-white shadow-md"
+                      : "text-gray-300 hover:text-white"
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  Leaderboard
+                </button>
+              </div>
 
-          {/* Word of the Day at the top of sidebar */}
-          <div className="mb-4 flex justify-center">
-            <WordOfTheDay isDark={isDark} dayWord={dayWord} />
-          </div>
-          <div className="flex-1 w-full overflow-hidden min-h-0">
-            {tab === "history" ? (
-              <HistorySection isDark={isDark} recentGames={recentGames} />
-            ) : (
-              <LeaderboardSection isDark={isDark} />
-            )}
-          </div>
+              {/* Word of the Day at the top of sidebar */}
+              <div className="mb-4 flex justify-center">
+                <WordOfTheDay isDark={isDark} dayWord={dayWord} />
+              </div>
+              <div className="flex-1 w-full overflow-hidden mb-4 min-h-0">
+                {tab === "history" ? (
+                  <HistorySection isDark={isDark} recentGames={recentGames} />
+                ) : (
+                  <LeaderboardSection isDark={isDark} />
+                )}
+              </div>
+            </>
+          )}
 
           {/* Auth: Sign in / Sign up for guest, Sign out for logged-in */}
-          <div className="pt-4 border-t border-white/20 space-y-2">
+          <div
+            className={`space-y-2 ${isGuest ? "flex-1 flex flex-col justify-center pt-8" : "pt-4 border-t border-white/20"}`}
+          >
             {isGuest ? (
               <>
                 {typeof guestGamesPlayed === "number" && (

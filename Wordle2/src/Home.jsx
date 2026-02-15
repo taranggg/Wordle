@@ -168,6 +168,7 @@ function HomeMobile({
           onGameEnd={handleGameEndModal}
           isDark={isDark}
           useDailyWord={isDailyMode}
+          isGuest={!user}
         />
       </div>
 
@@ -378,6 +379,7 @@ function HomeDesk({
           onGameEnd={handleGameEndModal}
           isDark={isDark}
           useDailyWord={isDailyMode}
+          isGuest={!user}
         />
       </div>
 
@@ -482,19 +484,21 @@ export default function Home({ dayWord }) {
       ? lastGuessStatus.map(statusToColor)
       : [];
     const score = result === "win" ? 100 : 10;
-    setRecentGames((prev) => [
-      {
-        id: prev.length ? prev[0].id + 1 : 1,
-        word: word.toUpperCase(),
-        time: timeString,
-        status: result === "win" ? "WON" : "LOST",
-        result: result === "win" ? "✔" : "✗",
-        points: `+${score} points`,
-        duration: "-",
-        colors,
-      },
-      ...prev,
-    ]);
+    if (!isGuest) {
+      setRecentGames((prev) => [
+        {
+          id: prev.length ? prev[0].id + 1 : 1,
+          word: word.toUpperCase(),
+          time: timeString,
+          status: result === "win" ? "WON" : "LOST",
+          result: result === "win" ? "✔" : "✗",
+          points: `+${score} points`,
+          duration: "-",
+          colors,
+        },
+        ...prev,
+      ]);
+    }
     if (isGuest && guestGamesPlayed < GUEST_GAMES_LIMIT) {
       setGuestGamesPlayed((c) => Math.min(c + 1, GUEST_GAMES_LIMIT));
     }
@@ -539,7 +543,7 @@ export default function Home({ dayWord }) {
         duration: "-",
         colors: [],
       }))
-    : recentGames;
+    : [];
 
   const homeProps = {
     backgroundStyle,

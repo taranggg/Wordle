@@ -52,7 +52,15 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <KeyboardProvider>
-          <Toaster position="top-right" reverseOrder={false} />
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              className: "toast-glass",
+              success: { className: "toast-glass toast-glass-success" },
+              error: { className: "toast-glass toast-glass-error" },
+            }}
+          />
           <Routes>
             <Route path="/" element={<Home dayWord={dayWord} />} />
             <Route path="/login" element={<Login />} />
