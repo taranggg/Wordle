@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from google.oauth2 import id_token
-from google.auth.transport import requests
+import requests
 from app.core.config import settings
 from app.db.mongodb import get_database
 from app.models.user import UserCreate, UserResponse, UserInDB
@@ -14,10 +13,16 @@ router = APIRouter()
 @router.post("/google", response_model=dict)
 async def google_auth(token: str = Body(..., embed=True)):
     try:
-        # Verify the token
-        id_info = id_token.verify_oauth2_token(
-            token, requests.Request(), settings.GOOGLE_CLIENT_ID
+        # Verify access token by fetching user info
+        response = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {token}"}
         )
+        
+        if response.status_code != 200:
+            raise ValueError("Invalid access token")
+            
+        id_info = response.json()
 
         google_id = id_info['sub']
         email = id_info['email']

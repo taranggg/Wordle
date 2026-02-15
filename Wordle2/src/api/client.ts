@@ -12,6 +12,20 @@ export function apiUrl(path: string): string {
   return `${base}${p}`;
 }
 
+const TOKEN_KEY = "wordle_token";
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
 export async function authFetch(
   path: string,
   options: RequestInit & { timeout?: number } = {},
@@ -20,15 +34,22 @@ export async function authFetch(
   const timeoutMs = options.timeout ?? DEFAULT_TIMEOUT_MS;
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
+  
+  const token = getToken();
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+
+  if (token) {
+    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+  }
+
   try {
     const res = await fetch(url, {
       ...options,
       signal: options.signal ?? controller.signal,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+      headers,
     });
     return res;
   } finally {
@@ -52,9 +73,14 @@ export async function authWithGoogle(token: string): Promise<SigninResponse> {
     method: "POST",
     body: JSON.stringify({ token }),
   });
-  const data = (await res.json().catch(() => ({}))) as { detail?: string };
+  const data = (await res.json().catch(() => ({}))) as { detail?: string } & SigninResponse;
   if (!res.ok) throw new Error(data.detail ?? "Google sign in failed.");
-  return data as SigninResponse;
+  
+  if (data.access_token) {
+    setToken(data.access_token);
+  }
+  
+  return data;
 }
 
 export async function getMe(): Promise<{
@@ -66,22 +92,33 @@ export async function getMe(): Promise<{
   avatar?: string;
 } | null> {
   const res = await authFetch("/api/auth/me");
-  const data = (await res.json().catch(() => ({}))) as { user?: unknown };
+  const data = (await res.json().catch(() => ({}))) as { detail?: string } & UserResponse; // UserResponse from backend is the user object directly or nested?
+  // Backend returns UserResponse model directly.
   if (!res.ok) return null;
-  return (
-    (data.user as {
+  
+  // The backend returns the UserResponse object directly, not wrapped in { user: ... }
+  // Based on auth.py: response_model=UserResponse
+  const user = data as unknown as {
       id: string;
       username: string;
       email: string;
-      firstName: string;
-      lastName?: string;
       avatar?: string;
-    }) ?? null
-  );
+      google_id: string;
+  };
+  
+  return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      firstName: user.username, // mapping for compatibility
+      avatar: user.avatar
+  };
 }
 
 export async function logout(): Promise<void> {
-  await authFetch("/api/auth/logout", { method: "POST" });
+  removeToken();
+  // Optional: call backend to invalidate if needed, but JWTs are stateless
+  // await authFetch("/api/auth/logout", { method: "POST" });
 }
 
 export interface CreateGamePayload {
