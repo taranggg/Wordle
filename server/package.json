@@ -8,7 +8,7 @@
     "server": "nodemon server.js",
     "lint": "eslint ."
   },
-  "author": "Adam and Tarang",
+  "author": "Tarang",
   "license": "ISC",
   "description": "",
   "dependencies": {
