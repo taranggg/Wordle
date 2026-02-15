@@ -20,7 +20,7 @@ export default function GuessCell({
   }, [letter]);
 
   const base = compact
-    ? "min-w-0 w-10 h-10 text-base flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1"
+    ? "min-w-0 w-12 h-12 text-lg flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1"
     : "min-w-0 w-10 h-10 text-base " +
       "sm:w-12 sm:h-12 sm:text-lg " +
       "md:w-14 md:h-14 md:text-xl " +

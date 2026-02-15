@@ -45,9 +45,9 @@ export default function MenuModal({
   };
 
   const desktopVariants = {
-    hidden: { x: "-100%", opacity: 0 },
+    hidden: { x: "100%", opacity: 0 },
     visible: { x: 0, opacity: 1 },
-    exit: { x: "-100%", opacity: 0 },
+    exit: { x: "100%", opacity: 0 },
   };
 
   return (
@@ -59,7 +59,7 @@ export default function MenuModal({
 
       <div
         className={`fixed inset-0 flex ${
-          isMobile ? "items-end justify-center" : "items-start justify-start"
+          isMobile ? "items-end justify-center" : "items-stretch justify-end"
         }`}
       >
         <motion.div
@@ -76,7 +76,7 @@ export default function MenuModal({
           className={`bg-[#39393a5d] text-white shadow-xl z-50 relative flex flex-col ${
             isMobile
               ? "w-full h-full rounded-none pt-16 pb-4" // Fullscreen mobile
-              : "w-[90vw] h-full rounded-r-xl pt-4 pb-4 max-w-lg" // Drawer style on desktop
+              : "w-[90vw] h-full rounded-l-xl pt-4 pb-4 max-w-lg" // Drawer from right on desktop
           } p-4`}
         >
           {/* Close Button */}

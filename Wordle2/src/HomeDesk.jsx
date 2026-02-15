@@ -84,22 +84,26 @@ export default function HomeDesk({
         style={{ ...backgroundStyle, fontFamily: "'Quicksand', sans-serif" }}
       >
         <nav
-          className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-2 ${glassNav(isDark)}`}
+          className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-5 py-2.5 ${glassNav(isDark)}`}
         >
-          <MenuButton onClick={toggleMenu} isDark={isDark} />
-          <img
-            src={wordleLogo}
-            alt="Wordle"
-            className="h-8 w-auto object-contain opacity-90"
-            draggable={false}
-          />
-          <ProfileButton
-            isDark={isDark}
-            user={null}
-            toggleTheme={toggleTheme}
-            isGuest
-            iconSize={22}
-          />
+          <a href="/" className="flex-shrink-0" aria-label="Wordle home">
+            <img
+              src={wordleLogo}
+              alt="Wordle"
+              className="h-9 w-auto object-contain opacity-95"
+              draggable={false}
+            />
+          </a>
+          <div className="flex items-center gap-2">
+            <ProfileButton
+              isDark={isDark}
+              user={null}
+              toggleTheme={toggleTheme}
+              isGuest
+              iconSize={22}
+            />
+            <MenuButton onClick={toggleMenu} isDark={isDark} />
+          </div>
         </nav>
         <div
           className={`w-full max-w-md rounded-3xl p-8 text-center ${glassCard(isDark)}`}
@@ -156,33 +160,33 @@ export default function HomeDesk({
       className="home-desk min-h-screen flex flex-col"
       style={{ ...backgroundStyle, fontFamily: "'Quicksand', sans-serif" }}
     >
-      {/* Top bar: slimmer, same icon sizes */}
+      {/* Navbar: logo left, actions right */}
       <nav
-        className={`flex-shrink-0 flex items-center justify-between gap-3 px-4 py-2 ${glassNav(isDark)}`}
+        className={`flex-shrink-0 flex items-center justify-between px-5 py-2.5 ${glassNav(isDark)}`}
       >
-        <MenuButton onClick={toggleMenu} isDark={isDark} />
-        <div className="flex items-center gap-4">
+        <a href="/" className="flex-shrink-0" aria-label="Wordle home">
           <img
             src={wordleLogo}
             alt="Wordle"
             className="h-9 w-auto object-contain opacity-95"
             draggable={false}
           />
-          <span
-            className={`hidden sm:inline text-sm ${
-              isDark ? "text-white/60" : "text-gray-500"
-            }`}
+        </a>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <div
+            className={`flex rounded-lg p-0.5 ${isDark ? "bg-white/10" : "bg-black/10"}`}
           >
-            Guess in six tries
-          </span>
-          <div className="flex rounded-full p-1 bg-white/10">
             <button
               type="button"
               onClick={() => setIsDailyMode(false)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
                 !isDailyMode
-                  ? "bg-white/30 text-white shadow-inner"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
+                  ? isDark
+                    ? "bg-white/25 text-white"
+                    : "bg-black/15 text-gray-800"
+                  : isDark
+                    ? "text-white/80 hover:bg-white/10 hover:text-white"
+                    : "text-gray-600 hover:bg-black/10 hover:text-gray-800"
               }`}
             >
               Random
@@ -190,23 +194,29 @@ export default function HomeDesk({
             <button
               type="button"
               onClick={() => setIsDailyMode(true)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
                 isDailyMode
-                  ? "bg-white/30 text-white shadow-inner"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
+                  ? isDark
+                    ? "bg-white/25 text-white"
+                    : "bg-black/15 text-gray-800"
+                  : isDark
+                    ? "text-white/80 hover:bg-white/10 hover:text-white"
+                    : "text-gray-600 hover:bg-black/10 hover:text-gray-800"
               }`}
             >
               Daily
             </button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
+          <div
+            className={`w-px h-5 ${isDark ? "bg-white/20" : "bg-black/20"}`}
+            aria-hidden="true"
+          />
           <div className="relative">
             <button
               type="button"
               onClick={() => setHintOpen((o) => !o)}
-              className={`p-2 rounded-xl transition-colors ${
-                isDark ? "hover:bg-white/15" : "hover:bg-black/10"
+              className={`p-2 rounded-lg transition-colors ${
+                isDark ? "hover:bg-white/10" : "hover:bg-black/10"
               }`}
               title="Hint"
               aria-expanded={hintOpen}
@@ -215,8 +225,10 @@ export default function HomeDesk({
                 size={20}
                 className={
                   hintData.availableHintCount > 0
-                    ? "text-yellow-400"
-                    : "text-white/50"
+                    ? "text-yellow-500"
+                    : isDark
+                      ? "text-white/50"
+                      : "text-gray-500"
                 }
               />
             </button>
@@ -239,6 +251,7 @@ export default function HomeDesk({
               </>
             )}
           </div>
+          <div className="w-px h-5 bg-white/20" aria-hidden="true" />
           <ProfileButton
             isDark={isDark}
             user={user ? { name: user.username } : null}
@@ -246,12 +259,13 @@ export default function HomeDesk({
             isGuest={!user}
             iconSize={22}
           />
+          <MenuButton onClick={toggleMenu} isDark={isDark} />
         </div>
       </nav>
 
-      {/* Main: board + keyboard only, no extra card */}
-      <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 py-4 gap-4">
-        <div className="flex-shrink-0 w-full max-w-sm flex justify-center">
+      {/* Main: larger board + keyboard */}
+      <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 py-4 gap-5">
+        <div className="flex-shrink-0 w-full max-w-md flex justify-center">
           <GameBoard
             key={gameKey}
             username={user?.username ?? "Guest"}
