@@ -1,11 +1,11 @@
 import { Dialog } from "@headlessui/react";
-import { Trophy, History, X } from "lucide-react";
-import { useState } from "react";
+import { History, X, LogOut, LogIn, UserPlus } from "lucide-react";
 import { motion } from "framer-motion";
-// import LeaderboardSection from "./LeaderBoard";
+import { Link, useNavigate } from "react-router-dom";
 import HistorySection from "./HistorySection";
 import { useWindowDimensions } from "../hooks/dimensions";
 import WordOfTheDay from "./Wotd";
+import { useAuth } from "../context/AuthContext";
 
 export default function MenuModal({
   isOpen,
@@ -13,9 +13,19 @@ export default function MenuModal({
   isDark,
   dayWord,
   recentGames,
+  isGuest,
+  guestGamesPlayed,
+  guestGamesLimit,
 }) {
-  // const [tab, setTab] = useState("leaderboard");
   const { isMobile } = useWindowDimensions();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    onClose();
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   const mobileVariants = {
     hidden: { y: "100%", opacity: 0 },
@@ -97,8 +107,47 @@ export default function MenuModal({
             <WordOfTheDay isDark={isDark} dayWord={dayWord} />
           </div>
           {/* Only show History content */}
-          <div className="flex-1 w-full overflow-hidden">
+          <div className="flex-1 w-full overflow-hidden min-h-0">
             <HistorySection isDark={isDark} recentGames={recentGames} />
+          </div>
+
+          {/* Auth: Sign in / Sign up for guest, Sign out for logged-in */}
+          <div className="pt-4 border-t border-white/20 space-y-2">
+            {isGuest ? (
+              <>
+                {typeof guestGamesPlayed === "number" && (
+                  <p className="text-center text-sm text-white/70 py-1">
+                    Playing as guest ({guestGamesPlayed}/{guestGamesLimit ?? 8}{" "}
+                    games). History is not stored.
+                  </p>
+                )}
+                <Link
+                  to="/login"
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-green-300 hover:bg-white/10 transition"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-blue-300 hover:bg-white/10 transition"
+                >
+                  <UserPlus className="w-5 h-5" />
+                  Create account
+                </Link>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-300 hover:bg-white/10 transition"
+              >
+                <LogOut className="w-5 h-5" />
+                Sign out
+              </button>
+            )}
           </div>
         </motion.div>
       </div>

@@ -2,6 +2,7 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 import Home from "./Home";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import { useEffect, useState } from "react";
 import { KeyboardProvider } from "./context/KeyboardContext.jsx";
 import { Routes, Route } from "react-router-dom";
@@ -19,12 +20,12 @@ function App() {
     async function fetchRandomWord() {
       try {
         const wordRes = await fetch(
-          "https://random-word-api.herokuapp.com/word"
+          "https://random-word-api.herokuapp.com/word",
         );
         const wordArr = await wordRes.json();
         const word = wordArr[0];
         const res = await fetch(
-          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
         );
         const data = await res.json();
 
@@ -48,14 +49,16 @@ function App() {
   }, []);
   return (
     <ThemeProvider>
-      <KeyboardProvider>
-        <Toaster position="top-right" reverseOrder={false} />
-        <Routes>
-          <Route path="/" element={<Home dayWord={dayWord} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </KeyboardProvider>
+      <AuthProvider>
+        <KeyboardProvider>
+          <Toaster position="top-right" reverseOrder={false} />
+          <Routes>
+            <Route path="/" element={<Home dayWord={dayWord} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </KeyboardProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

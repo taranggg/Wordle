@@ -31,8 +31,11 @@ export function validateForm(state) {
   if (!state.password) errors.password = "Password is required.";
   if (state.password !== state.confirmPassword)
     errors.confirmPassword = "Passwords do not match.";
-  if (!state.age || isNaN(state.age) || state.age <= 0)
-    errors.age = "Valid age is required.";
-  if (!state.gender) errors.gender = "Gender is required.";
+  if (state.password && state.password.length < 8)
+    errors.password = "Password must be at least 8 characters.";
+  if (state.gender) {
+    const allowed = ["male", "female", "other", "preferNotToSay"];
+    if (!allowed.includes(state.gender)) errors.gender = "Invalid selection.";
+  }
   return errors;
 }

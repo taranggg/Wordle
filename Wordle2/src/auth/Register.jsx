@@ -1,11 +1,18 @@
 import React, { useReducer, useState } from "react";
 import { formReducer, initialState, validateForm } from "./reducer";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signup } from "../api/client";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 export default function Register() {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     dispatch({
@@ -16,14 +23,33 @@ export default function Register() {
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm(state);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    console.log("Form submitted:", state);
+
+    setLoading(true);
+    try {
+      const payload = {
+        firstName: state.name.trim(),
+        lastName: (state.lastName || "").trim(),
+        username: state.username.trim(),
+        email: state.email.trim(),
+        password: state.password,
+        gender: state.gender || undefined,
+      };
+      const data = await signup(payload);
+      setUser(data.user);
+      toast.success("Account created. Welcome!");
+      navigate("/", { replace: true });
+    } catch (err) {
+      toast.error(err.message || "Sign up failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,7 +82,6 @@ export default function Register() {
               label: "Confirm Password",
               type: "password",
             },
-            { name: "age", label: "Age", type: "number" },
           ].map(({ name, label, type = "text" }) => (
             <div key={name} className="flex flex-col">
               <label className="text-sm font-medium mb-1">{label}</label>
@@ -69,7 +94,8 @@ export default function Register() {
                 className={`px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-orange-400 ${
                   errors[name] ? "border-red-400" : ""
                 }`}
-                required
+                required={name !== "lastName"}
+                disabled={loading}
               />
               {errors[name] && (
                 <p className="text-red-400 text-sm mt-1">{errors[name]}</p>
@@ -86,11 +112,9 @@ export default function Register() {
               className={`w-full px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30 text-white focus:outline-none ${
                 errors.gender ? "border-red-400" : ""
               }`}
-              required
+              disabled={loading}
             >
-              <option value="" disabled>
-                Select Gender
-              </option>
+              <option value="">Select Gender (optional)</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
@@ -101,12 +125,19 @@ export default function Register() {
             )}
           </div>
 
+          <p className="text-white/60 text-xs md:col-span-2">
+            Password must be at least 8 characters and contain a letter and a
+            number.
+          </p>
+
           <div className="md:col-span-2 mt-2">
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold transition"
+              disabled={loading}
+              className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-600 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold transition flex items-center justify-center gap-2"
             >
-              Create Account
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              {loading ? "Creating account…" : "Create Account"}
             </button>
           </div>
         </form>
