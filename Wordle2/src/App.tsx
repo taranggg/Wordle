@@ -5,7 +5,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { KeyboardProvider } from "./context/KeyboardContext";
 import Home from "./Home";
-import Register from "./auth/Register";
+
 import Login from "./auth/Login";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -78,7 +78,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home dayWord={dayWord} />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+
             <Route
               path="/profile"
               element={

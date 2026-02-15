@@ -4,7 +4,7 @@ const DEFAULT_TIMEOUT_MS = 15000;
 
 const getApiUrl = (): string =>
   (import.meta.env.VITE_API_URL as string | undefined) ??
-  "http://localhost:5000";
+  "http://localhost:8000";
 
 export function apiUrl(path: string): string {
   const base = getApiUrl().replace(/\/$/, "");
@@ -37,50 +37,23 @@ export async function authFetch(
 }
 
 export interface SigninResponse {
-  success: boolean;
-  message: string;
+  access_token: string;
+  token_type: string;
   user: {
     id: string;
     username: string;
     email: string;
-    firstName: string;
-    lastName?: string;
     avatar?: string;
   };
 }
 
-export async function signin(
-  emailOrUsername: string,
-  password: string,
-): Promise<SigninResponse> {
-  const res = await authFetch("/api/auth/signin", {
+export async function authWithGoogle(token: string): Promise<SigninResponse> {
+  const res = await authFetch("/api/auth/google", {
     method: "POST",
-    body: JSON.stringify({
-      emailOrUsername: emailOrUsername.trim(),
-      password,
-    }),
+    body: JSON.stringify({ token }),
   });
-  const data = (await res.json().catch(() => ({}))) as { message?: string };
-  if (!res.ok) throw new Error(data.message ?? "Sign in failed.");
-  return data as SigninResponse;
-}
-
-export interface SignupPayload {
-  firstName: string;
-  lastName?: string;
-  username: string;
-  email: string;
-  password: string;
-  gender?: string;
-}
-
-export async function signup(payload: SignupPayload): Promise<SigninResponse> {
-  const res = await authFetch("/api/auth/signup", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-  const data = (await res.json().catch(() => ({}))) as { message?: string };
-  if (!res.ok) throw new Error(data.message ?? "Sign up failed.");
+  const data = (await res.json().catch(() => ({}))) as { detail?: string };
+  if (!res.ok) throw new Error(data.detail ?? "Google sign in failed.");
   return data as SigninResponse;
 }
 

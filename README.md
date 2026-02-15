@@ -1,81 +1,71 @@
 # Wordle Game
 
-A full-stack Wordle-style word puzzle game with a **TypeScript** backend and **TypeScript** React frontend.
+A full-stack Wordle-style word puzzle game.
 
 ## Stack
 
-- **Backend:** Node.js, Express, TypeScript, MongoDB (Mongoose)
+- **Backend:** Python, FastAPI, MongoDB (Motor)
 - **Frontend:** React 19, Vite, TypeScript, Tailwind CSS, Framer Motion
 
 ## Project structure
 
 ```
 Wordle/
-├── server/                 # Backend (TypeScript)
-│   ├── src/
-│   │   ├── config/         # env, db
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── scripts/
-│   │   ├── utils/
-│   │   └── index.ts
-│   ├── config/             # config.env
-│   └── package.json
-├── Wordle2/                # Frontend (TypeScript)
-│   ├── src/
+├── server/                 # Backend (Python/FastAPI)
+│   ├── app/
 │   │   ├── api/
-│   │   ├── assets/
-│   │   ├── auth/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── hooks/
-│   │   ├── pages/
-│   │   ├── types/
-│   │   ├── utils/
-│   │   ├── App.tsx
-│   │   └── main.tsx
+│   │   ├── core/
+│   │   ├── db/
+│   │   ├── models/
+│   │   └── main.py
+│   ├── .env
+│   └── requirements.txt
+├── Wordle2/                # Frontend (React/TypeScript)
+│   ├── src/
 │   └── package.json
 └── README.md
 ```
 
 ## Getting started
 
-**Install and run both server and frontend:**
+### 1. Backend (Server)
+
+Navigate to the `server` directory and install dependencies:
 
 ```bash
-pnpm i
+cd server
+pip install -r requirements.txt
+```
+
+Create a `.env` file (copy from `.env.example`) and add your MongoDB URI and Google Client ID.
+
+Start the server:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+- **API Documentation:** `http://localhost:8000/docs`
+
+### 2. Frontend (Client)
+
+Navigate to the `Wordle2` directory:
+
+```bash
+cd Wordle2
+pnpm install
 pnpm dev
 ```
 
-- **API** → `http://localhost:5000`
-- **App** → `http://localhost:5173`
+- **App:** `http://localhost:5173`
 
-Before first run: add `server/config/config.env` (see [server/README.md](server/README.md) and `config.env.example`) for MongoDB and env vars.
+## Configuration
 
-**Run only one:**
+Make sure your `Wordle2/.env` or `Wordle2/src/api/client.ts` points to `http://localhost:8000`.
 
-```bash
-cd server && pnpm dev   # backend only
-cd Wordle2 && pnpm dev  # frontend only
-```
+## Features
 
-Set `VITE_API_URL` in the frontend if your API is not at `http://localhost:5000`.
-
-### Production build
-
-```bash
-cd server && pnpm build && pnpm start
-cd Wordle2 && pnpm build   # output in dist/
-```
-
-## How to play
-
-- Guess the hidden five-letter word in six attempts.
-- Green = correct letter and position; yellow = letter in word, wrong position; gray = letter not in word.
-- Use hints, view leaderboard and game history when signed in.
-
----
-
-© Wordle. All rights reserved.
+-   **Google Authentication:** Secure login with Google.
+-   **Wordle Gameplay:** Guess 5-letter words.
+-   **Leaderboard:** Track top players.
+-   **History:** View past games.

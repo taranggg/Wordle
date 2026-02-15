@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, Lock, LogIn, Loader2, UserRound } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Loader2, UserRound } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import wordleLogo from "../assets/wordlelogo.png";
 import { useAuth } from "../context/AuthContext";
-import { signin } from "../api/client";
-import { apiUrl } from "../api/client";
+import { authWithGoogle } from "../api/client";
+import { useGoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 
 const MotionDiv = motion.div;
@@ -15,8 +15,6 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ isDark = false }: LoginPageProps) {
-  const [emailOrUsername, setEmailOrUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { user, setUser, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -29,33 +27,28 @@ export default function LoginPage({ isDark = false }: LoginPageProps) {
     if (!authLoading && user) navigate(from, { replace: true });
   }, [authLoading, user, navigate, from]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("error") === "google") {
-      toast.error("Sign in with Google failed. Try again or use email.");
-    }
-  }, [location.search]);
-
-  if (!authLoading && user) return null;
-
-  const handleLogin = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!emailOrUsername.trim() || !password) {
-      toast.error("Please enter email/username and password.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const data = await signin(emailOrUsername, password);
-      setUser(data.user);
-      toast.success("Welcome back!");
-      navigate(from, { replace: true });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Sign in failed.");
-    } finally {
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      try {
+        const res = await authWithGoogle(tokenResponse.access_token);
+        setUser(res.user);
+        toast.success("Welcome back!");
+        navigate(from, { replace: true });
+      } catch (err) {
+        toast.error("Google login failed.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      toast.error("Google login failed.");
       setLoading(false);
     }
-  };
+  });
+
+  if (!authLoading && user) return null;
 
   return (
     <div
@@ -92,60 +85,15 @@ export default function LoginPage({ isDark = false }: LoginPageProps) {
           Sign in to continue Wordle
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="relative">
-            <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              autoComplete="username"
-              placeholder="Email or username"
-              value={emailOrUsername}
-              onChange={(e) => setEmailOrUsername(e.target.value)}
-              className="w-full pl-10 py-2 rounded-lg bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm placeholder:text-gray-300"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="relative">
-            <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-            <input
-              type="password"
-              autoComplete="current-password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 py-2 rounded-lg bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm placeholder:text-gray-300"
-              disabled={loading}
-            />
-          </div>
-
+        <div className="flex flex-col gap-4">
           <button
-            type="submit"
+            onClick={() => loginWithGoogle()}
+            type="button"
             disabled={loading}
-            className="w-full mt-2 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-white text-gray-800 hover:bg-gray-100 border border-gray-200 font-medium transition text-base shadow-sm"
           >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <LogIn className="w-4 h-4" />
-            )}
-            {loading ? "Signing in…" : "Login"}
-          </button>
-
-          <div className="relative my-3">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/20" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-transparent px-2 opacity-70">or</span>
-            </div>
-          </div>
-
-          <a
-            href={apiUrl("/api/auth/google")}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-white text-gray-800 hover:bg-gray-100 border border-gray-200 font-medium transition text-sm shadow-sm"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+            <svg className="w-6 h-6" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -163,31 +111,22 @@ export default function LoginPage({ isDark = false }: LoginPageProps) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Sign in with Google
-          </a>
+            )}
+            {loading ? "Signing in..." : "Sign in with Google"}
+          </button>
 
           <button
             type="button"
             onClick={() => navigate("/", { replace: true })}
             disabled={loading}
-            className="w-full mt-3 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border-2 border-white/40 hover:bg-white/10 transition text-sm font-medium opacity-90"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg border-2 border-white/40 hover:bg-white/10 transition text-sm font-medium opacity-90 text-inherit"
           >
-            <UserRound className="w-4 h-4" />
+            <UserRound className="w-5 h-5" />
             Continue as Guest
           </button>
-        </form>
+        </div>
 
         <p className="text-xs text-center mt-6 opacity-70">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-orange-500 hover:underline font-medium"
-          >
-            Register
-          </Link>
-        </p>
-
-        <p className="text-xs text-center mt-3 opacity-70">
           © {new Date().getFullYear()} Wordle. All rights reserved.
         </p>
       </MotionDiv>
