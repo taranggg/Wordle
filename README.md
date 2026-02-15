@@ -42,10 +42,10 @@ Create a `.env` file (copy from `.env.example`) and add your MongoDB URI and Goo
 Start the server:
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 5000
 ```
 
-- **API Documentation:** `http://localhost:8000/docs`
+- **API Documentation:** `http://localhost:5000/docs`
 
 ### 2. Frontend (Client)
 

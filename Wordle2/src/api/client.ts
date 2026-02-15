@@ -4,7 +4,7 @@ const DEFAULT_TIMEOUT_MS = 15000;
 
 const getApiUrl = (): string =>
   (import.meta.env.VITE_API_URL as string | undefined) ??
-  "http://localhost:8000";
+  "http://localhost:5000";
 
 export function apiUrl(path: string): string {
   const base = getApiUrl().replace(/\/$/, "");
