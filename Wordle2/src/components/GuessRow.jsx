@@ -6,7 +6,7 @@ const WORD_LENGTH = 5;
 export default function GuessRow({ guess, isDark, compact }) {
   return (
     <div
-      className={`flex justify-center ${compact ? "space-x-0.5" : "space-x-1"}`}
+      className={`flex justify-center ${compact ? "space-x-1.5" : "space-x-1"}`}
     >
       {Array.from({ length: WORD_LENGTH }).map((_, j) => {
         const letter = guess ? guess.word[j] : "";

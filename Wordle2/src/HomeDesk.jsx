@@ -6,7 +6,7 @@ import { MenuButton, ProfileButton } from "./components/Navbar";
 import OnScreenKeyboard from "./components/OnScreenKeyboard";
 import HintCard from "./components/HintCard";
 import wordleLogo from "./assets/wordlelogo.png";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Keyboard } from "lucide-react";
 
 const glassNav = (isDark) =>
   isDark
@@ -50,6 +50,7 @@ export default function HomeDesk({
     availableHintCount: 0,
   });
   const [hintOpen, setHintOpen] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(true);
   const onHintData = useCallback(
     (data) => setHintData(data || { hints: [], availableHintCount: 0 }),
     [],
@@ -251,7 +252,36 @@ export default function HomeDesk({
               </>
             )}
           </div>
-          <div className="w-px h-5 bg-white/20" aria-hidden="true" />
+          <div
+            className={`w-px h-5 ${isDark ? "bg-white/20" : "bg-black/20"}`}
+            aria-hidden="true"
+          />
+          <button
+            type="button"
+            onClick={() => setKeyboardVisible((v) => !v)}
+            className={`p-2 rounded-lg transition-colors ${
+              isDark ? "hover:bg-white/10" : "hover:bg-black/10"
+            }`}
+            title={keyboardVisible ? "Hide keyboard" : "Show keyboard"}
+            aria-label={keyboardVisible ? "Hide keyboard" : "Show keyboard"}
+          >
+            <Keyboard
+              size={20}
+              className={
+                keyboardVisible
+                  ? isDark
+                    ? "text-white/90"
+                    : "text-gray-700"
+                  : isDark
+                    ? "text-white/40"
+                    : "text-gray-400"
+              }
+            />
+          </button>
+          <div
+            className={`w-px h-5 ${isDark ? "bg-white/20" : "bg-black/20"}`}
+            aria-hidden="true"
+          />
           <ProfileButton
             isDark={isDark}
             user={user ? { name: user.username } : null}
@@ -263,9 +293,9 @@ export default function HomeDesk({
         </div>
       </nav>
 
-      {/* Main: larger board + keyboard */}
+      {/* Main: larger board + optional keyboard */}
       <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 py-4 gap-5">
-        <div className="flex-shrink-0 w-full max-w-md flex justify-center">
+        <div className="flex-shrink-0 w-full max-w-lg flex justify-center">
           <GameBoard
             key={gameKey}
             username={user?.username ?? "Guest"}
@@ -278,9 +308,11 @@ export default function HomeDesk({
             onHintData={onHintData}
           />
         </div>
-        <div className="flex-shrink-0 w-full max-w-md flex justify-center">
-          <OnScreenKeyboard isDark={isDark} compact noWrapper />
-        </div>
+        {keyboardVisible && (
+          <div className="flex-shrink-0 w-full max-w-md flex justify-center">
+            <OnScreenKeyboard isDark={isDark} compact noWrapper />
+          </div>
+        )}
       </main>
 
       <MenuModal

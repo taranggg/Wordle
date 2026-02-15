@@ -202,11 +202,11 @@ export default function GameBoard({
   const isDense = compactHint || denseDesktop;
   return (
     <div
-      className={`w-full flex flex-col items-center ${isDense ? "gap-3" : "gap-8 md:gap-10"} ${denseDesktop ? "max-w-md" : ""}`}
+      className={`w-full flex flex-col items-center ${isDense ? "gap-4" : "gap-8 md:gap-10"} ${denseDesktop ? "max-w-lg" : ""}`}
     >
       {/* No outer box – just the grid of cells */}
       <div
-        className={`relative flex flex-col items-center justify-center w-full mx-auto ${denseDesktop ? "space-y-2" : "space-y-1 sm:space-y-3"}`}
+        className={`relative flex flex-col items-center justify-center w-full mx-auto ${denseDesktop ? "space-y-2.5" : "space-y-1 sm:space-y-3"}`}
       >
         {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => {
           if (i < guesses.length) {
