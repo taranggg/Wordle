@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import GuessRow from "./GuessRow";
 import { WORDS } from "../util/words";
@@ -43,7 +43,6 @@ function getWordHint(word) {
 }
 
 export default function GameBoard({
-  username = "Player",
   onGameEnd,
   isDark,
   useDailyWord = false,
@@ -57,7 +56,6 @@ export default function GameBoard({
   const [guesses, setGuesses] = useState([]);
   const [currentInput, setCurrentInput] = useState("");
   const [gameOver, setGameOver] = useState(false);
-  const [isWinner, setIsWinner] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { keyPressed, resetKey } = useKeyboard();
 
@@ -67,21 +65,76 @@ export default function GameBoard({
     }
   };
 
-  useEffect(() => {
-    if (keyPressed) {
-      if (gameOver || isSubmitting) return;
-      const key = keyPressed.toUpperCase();
-
-      if (key === "BACKSPACE") {
-        setCurrentInput((prev) => prev.slice(0, -1));
-      } else if (key === "ENTER" && currentInput.length === WORD_LENGTH) {
-        submitGuess();
-      } else if (/^[A-Z]$/.test(key) && currentInput.length < WORD_LENGTH) {
-        setCurrentInput((prev) => prev + key);
-      }
-      resetKey();
+  const checkIfWordIsValid = useCallback(async (word) => {
+    try {
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+      );
+      if (!response.ok) return false;
+      const data = await response.json();
+      return Array.isArray(data) && data.length > 0;
+    } catch {
+      return false;
     }
-  }, [keyPressed, resetKey, gameOver, isSubmitting, currentInput]);
+  }, []);
+
+  const submitGuess = useCallback(async () => {
+    const guess = currentInput.toUpperCase();
+    setIsSubmitting(true);
+    haptic();
+    let isValid = false;
+    try {
+      isValid = await checkIfWordIsValid(guess.toLowerCase());
+    } catch {
+      toast.error("Could not verify word. Check your connection.");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!isValid) {
+      toast.error("Not a valid English word.", { duration: 5000 });
+      setIsSubmitting(false);
+      return;
+    }
+    const status = getLetterStatus(guess, targetWord);
+    const newGuesses = [...guesses, { word: guess, status }];
+    setGuesses(newGuesses);
+    setCurrentInput("");
+    setIsSubmitting(false);
+    const attempts = newGuesses.length;
+    if (guess === targetWord) {
+      haptic();
+      setGameOver(true);
+      onGameEnd?.({
+        result: "win",
+        word: targetWord,
+        lastGuessStatus: status,
+        attempts,
+      });
+    } else if (newGuesses.length >= MAX_ATTEMPTS) {
+      haptic();
+      setGameOver(true);
+      onGameEnd?.({
+        result: "loss",
+        word: targetWord,
+        lastGuessStatus: status,
+        attempts,
+      });
+    }
+  }, [currentInput, targetWord, guesses, onGameEnd, checkIfWordIsValid]);
+
+  useEffect(() => {
+    if (!keyPressed) return;
+    if (gameOver || isSubmitting) return;
+    const key = keyPressed.toUpperCase();
+    if (key === "BACKSPACE") {
+      setCurrentInput((prev) => prev.slice(0, -1));
+    } else if (key === "ENTER" && currentInput.length === WORD_LENGTH) {
+      submitGuess();
+    } else if (/^[A-Z]$/.test(key) && currentInput.length < WORD_LENGTH) {
+      setCurrentInput((prev) => prev + key);
+    }
+    resetKey();
+  }, [keyPressed, resetKey, gameOver, isSubmitting, currentInput, submitGuess]);
 
   const availableHintCount = isGuest
     ? guesses.length >= 2
@@ -129,71 +182,12 @@ export default function GameBoard({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gameOver, currentInput, isSubmitting]);
+  }, [gameOver, currentInput, isSubmitting, submitGuess]);
 
-  const checkIfWordIsValid = async (word) => {
-    try {
-      const response = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
-      );
-      if (!response.ok) return false;
-      const data = await response.json();
-      return Array.isArray(data) && data.length > 0;
-    } catch {
-      return false;
-    }
-  };
-
-  const submitGuess = async () => {
-    const guess = currentInput.toUpperCase();
-    setIsSubmitting(true);
-    haptic();
-    let isValid = false;
-    try {
-      isValid = await checkIfWordIsValid(guess.toLowerCase());
-    } catch {
-      toast.error("Could not verify word. Check your connection.");
-      setIsSubmitting(false);
-      return;
-    }
-    if (!isValid) {
-      toast.error("Not a valid English word.", { duration: 5000 });
-      setIsSubmitting(false);
-      return;
-    }
-
-    const status = getLetterStatus(guess, targetWord);
-    const newGuess = { word: guess, status };
-    const newGuesses = [...guesses, newGuess];
-    setGuesses(newGuesses);
-    setCurrentInput("");
-    setIsSubmitting(false);
-
-    const attempts = newGuesses.length;
-    if (guess === targetWord) {
-      haptic();
-      setIsWinner(true);
-      setGameOver(true);
-      onGameEnd?.({
-        result: "win",
-        word: targetWord,
-        lastGuessStatus: status,
-        attempts,
-      });
-    } else if (newGuesses.length >= MAX_ATTEMPTS) {
-      haptic();
-      setIsWinner(false);
-      setGameOver(true);
-      onGameEnd?.({
-        result: "loss",
-        word: targetWord,
-        lastGuessStatus: status,
-        attempts,
-      });
-    }
-  };
-
-  const hints = targetWord ? getWordHint(targetWord) : [];
+  const hints = useMemo(
+    () => (targetWord ? getWordHint(targetWord) : []),
+    [targetWord],
+  );
 
   useEffect(() => {
     onHintData?.({ hints, availableHintCount });
@@ -204,7 +198,6 @@ export default function GameBoard({
     <div
       className={`w-full flex flex-col items-center ${isDense ? "gap-4" : "gap-8 md:gap-10"} ${denseDesktop ? "max-w-lg" : ""}`}
     >
-      {/* No outer box – just the grid of cells */}
       <div
         className={`relative flex flex-col items-center justify-center w-full mx-auto ${denseDesktop ? "space-y-2.5" : "space-y-1 sm:space-y-3"}`}
       >

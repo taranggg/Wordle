@@ -1,8 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
+
+const MotionButton = motion.button;
 import { useKeyboard } from "../context/KeyboardContext";
-import { FaLongArrowAltRight } from "react-icons/fa"; // For Enter
-import { MdBackspace } from "react-icons/md"; // For Backspace
+import { FaLongArrowAltRight } from "react-icons/fa";
+import { MdBackspace } from "react-icons/md";
 
 const KEYS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -52,7 +54,7 @@ export default function OnScreenKeyboard({ isDark, compact = false }) {
                   isSpecial = true;
                 }
                 return (
-                  <motion.button
+                  <MotionButton
                     key={key}
                     onClick={() => handleKeyPress(key)}
                     whileTap={{ scale: 0.93 }}
@@ -79,7 +81,7 @@ export default function OnScreenKeyboard({ isDark, compact = false }) {
                     }}
                   >
                     {displayKey}
-                  </motion.button>
+                  </MotionButton>
                 );
               })}
             </div>

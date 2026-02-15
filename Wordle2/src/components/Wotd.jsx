@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { BookOpen, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const MotionDiv = motion.div;
+
 export default function WordOfTheDay({
   dayWord,
   isDark,
@@ -27,27 +29,23 @@ export default function WordOfTheDay({
           <BookOpen className="w-7 h-7 text-yellow-500 drop-shadow-lg" />
         </button>
       )}
-      {/* Sliding Card */}
       <AnimatePresence>
         {showCard && (
-          <motion.div
+          <MotionDiv
             initial={{ x: -80, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 180, damping: 18 }}
-            className={`w-full max-w-xs sm:max-w-md rounded-2xl p-4 border shadow-lg flex flex-col items-center relative
-              ${
-                isDark
-                  ? "bg-gray-200/20 border-white/30"
-                  : "bg-white/20 border-zinc-200"
-              }
-            `}
+            className={`w-full max-w-xs sm:max-w-md rounded-2xl p-4 border shadow-lg flex flex-col items-center relative ${
+              isDark
+                ? "bg-gray-200/20 border-white/30"
+                : "bg-white/20 border-zinc-200"
+            }`}
             style={{
               boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
               fontFamily: "'Quicksand', sans-serif",
             }}
           >
-            {/* Minimize Button */}
             <button
               onClick={() => setShowCard(false)}
               className={`absolute top-2 right-2 p-1 rounded-full transition
@@ -91,7 +89,7 @@ export default function WordOfTheDay({
                 {dayWord.meaning}
               </span>
             </div>
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
     </div>

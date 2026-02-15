@@ -1,6 +1,8 @@
 import React, { useReducer, useState } from "react";
 import { formReducer, initialState, validateForm } from "./reducer";
 import { motion } from "framer-motion";
+
+const MotionDiv = motion.div;
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -54,7 +56,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a1a1a] via-[#2c2c2c] to-[#1a1a1a] p-4">
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
@@ -148,7 +150,7 @@ export default function Register() {
             Sign In
           </Link>
         </p>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 }

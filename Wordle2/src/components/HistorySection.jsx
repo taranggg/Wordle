@@ -1,5 +1,4 @@
 import React from "react";
-// import PerformanceChart from "./PerformanceChart";
 import WordOfTheDay from "./Wotd";
 
 const getStatusStyle = (status) => {
@@ -32,7 +31,6 @@ export default function HistorySection({ isDark, recentGames = [] }) {
       style={{ minHeight: 0 }}
     >
       <div className="w-full">
-        {/* <PerformanceChart isDark={isDark} /> */}
         <div className="my-4 flex justify-center">
           <WordOfTheDay isDark={isDark} />
         </div>

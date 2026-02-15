@@ -14,7 +14,6 @@ const globalLeaderboard = [
   { name: "You", score: 2156, streak: 12, winRate: "87%" },
 ];
 
-// Pass isDark as a prop to control theme
 export default function LeaderboardSection({ isDark }) {
   const textColor = isDark ? "text-white" : "text-gray-900";
   const subTextColor = isDark ? "text-gray-300" : "text-gray-600";
@@ -23,7 +22,6 @@ export default function LeaderboardSection({ isDark }) {
     <div
       className={`w-full max-w-md mx-auto p-4 space-y-6 ${textColor} h-full flex flex-col`}
     >
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(userStats).map(([key, value]) => (
           <StatCard
@@ -35,7 +33,6 @@ export default function LeaderboardSection({ isDark }) {
         ))}
       </div>
 
-      {/* Leaderboard Cards */}
       <div
         className={`rounded-xl p-4 border shadow-xl backdrop-blur-md bg-white/10 border-white/20 flex-1 flex flex-col min-h-0 ${
           isDark ? "text-white" : "text-gray-900"
@@ -64,8 +61,8 @@ export default function LeaderboardSection({ isDark }) {
                   key={player.name}
                   className={`flex items-center justify-between p-3 rounded-lg group transition-transform duration-300 hover:scale-105 
                     border-2 backdrop-blur-md ${customStyle} ${
-                    !isTop && !isYou ? "bg-white/10 border-white/20" : ""
-                  }`}
+                      !isTop && !isYou ? "bg-white/10 border-white/20" : ""
+                    }`}
                   style={{
                     boxShadow:
                       isTop || isYou

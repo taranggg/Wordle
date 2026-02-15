@@ -1,9 +1,10 @@
 import { Dialog } from "@headlessui/react";
 import { X, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
-
 import ThemeToggleButton from "./ThemeToggleButton";
 import avatarSenku from "../assets/avatarSenku.png";
+
+const MotionDiv = motion.div;
 
 export default function ProfileModal({
   isOpen,
@@ -16,9 +17,8 @@ export default function ProfileModal({
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0" aria-hidden="true" onClick={onClose} />
 
-      {/* Top-right glassmorphic modal container */}
       <div className="fixed top-16 right-6 sm:right-10">
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
@@ -30,7 +30,6 @@ export default function ProfileModal({
             }
           `}
         >
-          {/* Close Icon */}
           <button
             onClick={onClose}
             className={`absolute top-3 right-3 rounded-full p-1 transition
@@ -76,10 +75,9 @@ export default function ProfileModal({
             </p>
           </div>
           <div className="absolute bottom-1 right-2" style={{ zIndex: 10 }}>
-            {/* Theme toggle button */}
             <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
           </div>
-        </motion.div>
+        </MotionDiv>
       </div>
     </Dialog>
   );

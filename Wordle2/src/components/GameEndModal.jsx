@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const MotionDiv = motion.div;
+const MotionButton = motion.button;
 import { LogIn, UserPlus, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -42,13 +45,13 @@ export default function GameEndModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <MotionDiv
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <motion.div
+          <MotionDiv
             initial={{ scale: 0.7, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0.7, rotate: 10 }}
@@ -129,22 +132,22 @@ export default function GameEndModal({
                     {shared ? "Copied!" : "Share"}
                   </button>
                 )}
-                <motion.button
+                <MotionButton
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   whileTap={{ scale: 0.95, rotate: 5 }}
                   className="px-6 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-pink-400 text-white font-bold text-lg shadow-lg border-2 border-white/60 hover:from-pink-400 hover:to-yellow-400 transition-all duration-200"
                   onClick={onPlayAgain}
                 >
                   {isWin ? "Play Again! 🚀" : "Try Again! 🔄"}
-                </motion.button>
+                </MotionButton>
               </div>
             )}
 
             <div className="absolute -top-6 right-6 text-3xl animate-spin-slow select-none pointer-events-none">
               {guestLimitReached ? "✨" : isWin ? "✨" : "💀"}
             </div>
-          </motion.div>
-        </motion.div>
+          </MotionDiv>
+        </MotionDiv>
       )}
     </AnimatePresence>
   );

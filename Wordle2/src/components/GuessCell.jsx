@@ -17,7 +17,7 @@ export default function GuessCell({
       return () => clearTimeout(timeout);
     }
     setPrevLetter(letter);
-  }, [letter]);
+  }, [letter, prevLetter]);
 
   const base = compact
     ? "min-w-0 w-14 h-14 text-xl flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1.5"

@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 
+const MotionSpan = motion.span;
+
 export default function ThemeToggleButton({ toggled, onToggle, size = 24 }) {
   return (
     <button
@@ -11,7 +13,7 @@ export default function ThemeToggleButton({ toggled, onToggle, size = 24 }) {
     >
       <AnimatePresence initial={false} mode="wait">
         {toggled ? (
-          <motion.span
+          <MotionSpan
             key="moon"
             initial={{ rotate: 90, opacity: 0, scale: 0.7 }}
             animate={{ rotate: 0, opacity: 1, scale: 1 }}
@@ -21,9 +23,9 @@ export default function ThemeToggleButton({ toggled, onToggle, size = 24 }) {
             style={{ color: "#FACC15" }}
           >
             <Moon size={size} />
-          </motion.span>
+          </MotionSpan>
         ) : (
-          <motion.span
+          <MotionSpan
             key="sun"
             initial={{ rotate: -90, opacity: 0, scale: 0.7 }}
             animate={{ rotate: 0, opacity: 1, scale: 1 }}
@@ -33,7 +35,7 @@ export default function ThemeToggleButton({ toggled, onToggle, size = 24 }) {
             style={{ color: "#374151" }}
           >
             <Sun size={size} />
-          </motion.span>
+          </MotionSpan>
         )}
       </AnimatePresence>
     </button>

@@ -161,7 +161,6 @@ export default function HomeDesk({
       className="home-desk min-h-screen flex flex-col"
       style={{ ...backgroundStyle, fontFamily: "'Quicksand', sans-serif" }}
     >
-      {/* Navbar: logo left, actions right */}
       <nav
         className={`flex-shrink-0 flex items-center justify-between px-5 py-2.5 ${glassNav(isDark)}`}
       >
@@ -293,7 +292,6 @@ export default function HomeDesk({
         </div>
       </nav>
 
-      {/* Main: larger board + optional keyboard */}
       <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 py-4 gap-5">
         <div className="flex-shrink-0 w-full max-w-lg flex justify-center">
           <GameBoard

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+
+const MotionDiv = motion.div;
 import { Mail, Lock, LogIn, Loader2, UserRound } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import wordleLogo from "../assets/wordlelogo.png";
@@ -51,7 +53,7 @@ export default function LoginPage({ isDark }) {
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      <motion.div
+      <MotionDiv
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
@@ -140,7 +142,7 @@ export default function LoginPage({ isDark }) {
         <p className="text-xs text-center mt-3 opacity-70">
           © {new Date().getFullYear()} Wordle. All rights reserved.
         </p>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 }

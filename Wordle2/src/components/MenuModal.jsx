@@ -10,6 +10,8 @@ import {
   User,
 } from "lucide-react";
 import { motion } from "framer-motion";
+
+const MotionDiv = motion.div;
 import { Link, useNavigate } from "react-router-dom";
 import HistorySection from "./HistorySection";
 import LeaderboardSection from "./LeaderboardSection";
@@ -62,7 +64,7 @@ export default function MenuModal({
           isMobile ? "items-end justify-center" : "items-stretch justify-end"
         }`}
       >
-        <motion.div
+        <MotionDiv
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -75,11 +77,10 @@ export default function MenuModal({
           }}
           className={`bg-[#39393a5d] text-white shadow-xl z-50 relative flex flex-col ${
             isMobile
-              ? "w-full h-full rounded-none pt-16 pb-4" // Fullscreen mobile
-              : "w-[90vw] h-full rounded-l-xl pt-4 pb-4 max-w-lg" // Drawer from right on desktop
+              ? "w-full h-full rounded-none pt-16 pb-4"
+              : "w-[90vw] h-full rounded-l-xl pt-4 pb-4 max-w-lg"
           } p-4`}
         >
-          {/* Close Button */}
           <button
             onClick={onClose}
             className="absolute right-6 top-6 text-white hover:bg-white/10 rounded-full p-2 transition-colors z-10"
@@ -118,7 +119,6 @@ export default function MenuModal({
                 </button>
               </div>
 
-              {/* Word of the Day at the top of sidebar */}
               <div className="mb-4 flex justify-center">
                 <WordOfTheDay isDark={isDark} dayWord={dayWord} />
               </div>
@@ -132,7 +132,6 @@ export default function MenuModal({
             </>
           )}
 
-          {/* Auth: Sign in / Sign up for guest, Sign out for logged-in */}
           <div
             className={`space-y-2 ${isGuest ? "flex-1 flex flex-col justify-center pt-8" : "pt-4 border-t border-white/20"}`}
           >
@@ -182,7 +181,7 @@ export default function MenuModal({
               </>
             )}
           </div>
-        </motion.div>
+        </MotionDiv>
       </div>
     </Dialog>
   );

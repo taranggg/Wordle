@@ -1,18 +1,12 @@
-import { useState } from "react";
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import wordleLogo from "../assets/wordlelogo.png";
-// import ProfileModal from "./ProfileModal";
 import ThemeToggleButton from "./ThemeToggleButton";
 
-// Mobile NavBar with logo
-export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
+export function MobNavBar({ onMenuClick, isDark, toggleTheme }) {
   const iconColor = isDark ? "#fff" : "#222";
-  // const [isProfileOpen, setIsProfileOpen] = useState(false);
-
   return (
     <>
       <nav className="flex items-center justify-between px-4 py-3 bg-transparent">
-        {/* Menu Icon */}
         <button
           onClick={onMenuClick}
           className="hover:bg-black/10 dark:hover:bg-white/10 p-2 rounded-full transition"
@@ -21,7 +15,6 @@ export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
           <Menu className="w-6 h-6" color={iconColor} />
         </button>
 
-        {/* Logo */}
         <div className="flex items-center justify-center">
           <img
             src={wordleLogo}
@@ -33,24 +26,12 @@ export function MobNavBar({ onMenuClick, isDark, user, toggleTheme }) {
           />
         </div>
 
-        {/* Theme Toggle replaces Profile Icon */}
         <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
       </nav>
-
-      {/*
-      <ProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        user={user}
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-      />
-      */}
     </>
   );
 }
 
-// Desktop Menu Button
 export function MenuButton({ onClick, isDark }) {
   const iconColor = isDark ? "#fff" : "#222";
   return (
@@ -64,35 +45,12 @@ export function MenuButton({ onClick, isDark }) {
   );
 }
 
-// Desktop Profile Button
-export function ProfileButton({ isDark, user, toggleTheme, iconSize = 22 }) {
-  const iconColor = isDark ? "#fff" : "#222";
-  // const [isProfileOpen, setIsProfileOpen] = useState(false);
-
+export function ProfileButton({ isDark, toggleTheme, iconSize = 22 }) {
   return (
-    <>
-      {/* Theme Toggle replaces Profile Button – same size as other nav icons */}
-      <ThemeToggleButton
-        toggled={isDark}
-        onToggle={toggleTheme}
-        size={iconSize}
-      />
-      {/*
-      <button
-        onClick={() => setIsProfileOpen(true)}
-        className="hover:bg-black/10 dark:hover:bg-white/10 p-2 rounded-full transition"
-        aria-label="Profile"
-      >
-        <User className="w-6 h-6" color={iconColor} />
-      </button>
-      <ProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        user={user}
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-      />
-      */}
-    </>
+    <ThemeToggleButton
+      toggled={isDark}
+      onToggle={toggleTheme}
+      size={iconSize}
+    />
   );
 }
