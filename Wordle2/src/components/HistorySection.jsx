@@ -74,15 +74,15 @@ export default function HistorySection({ isDark, recentGames = [] }) {
                     </div>
 
                     <div className="flex items-center space-x-2 mb-2">
-                      {game.colors.map((color, i) => (
+                      {(game.colors || []).map((color, i) => (
                         <div
                           key={i}
                           className={`w-4 h-4 rounded ${
                             color === "green"
                               ? "bg-green-500"
                               : color === "yellow"
-                              ? "bg-yellow-400"
-                              : "bg-gray-500"
+                                ? "bg-yellow-400"
+                                : "bg-gray-500"
                           }`}
                         ></div>
                       ))}

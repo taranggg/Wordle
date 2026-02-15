@@ -34,7 +34,7 @@ export default function Register() {
     setLoading(true);
     try {
       const payload = {
-        firstName: state.name.trim(),
+        firstName: state.firstName.trim(),
         lastName: (state.lastName || "").trim(),
         username: state.username.trim(),
         email: state.email.trim(),
@@ -72,7 +72,7 @@ export default function Register() {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {[
-            { name: "name", label: "First Name" },
+            { name: "firstName", label: "First Name" },
             { name: "lastName", label: "Last Name" },
             { name: "username", label: "Username" },
             { name: "email", label: "Email Id", type: "email" },

@@ -5,6 +5,7 @@ import { WORDS } from "../util/words";
 import HintCard from "./HintCard";
 import { useKeyboard } from "../context/KeyboardContext";
 import { WORD_HINTS } from "../util/wordHints";
+import { getDailyWord, getRandomWord } from "../api/client";
 
 const WORD_LENGTH = 5;
 const MAX_ATTEMPTS = 6;
@@ -24,7 +25,7 @@ function getLetterStatus(guess, target) {
   guess.split("").forEach((char, i) => {
     if (status[i] !== "correct") {
       const index = targetLetters.findIndex(
-        (t, idx) => t === char && !used[idx]
+        (t, idx) => t === char && !used[idx],
       );
       if (index !== -1) {
         status[i] = "present";
@@ -41,18 +42,29 @@ function getWordHint(word) {
   return WORD_HINTS[word.toUpperCase()] || [];
 }
 
-export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
+export default function GameBoard({
+  username = "Player",
+  onGameEnd,
+  isDark,
+  useDailyWord = false,
+}) {
   const [targetWord, setTargetWord] = useState("");
   const [guesses, setGuesses] = useState([]);
   const [currentInput, setCurrentInput] = useState("");
   const [gameOver, setGameOver] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { keyPressed, resetKey } = useKeyboard();
+
+  const haptic = () => {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  };
 
   useEffect(() => {
     if (keyPressed) {
-      console.log("Key pressed from context:", keyPressed);
-      if (gameOver) return;
+      if (gameOver || isSubmitting) return;
       const key = keyPressed.toUpperCase();
 
       if (key === "BACKSPACE") {
@@ -64,21 +76,34 @@ export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
       }
       resetKey();
     }
-  }, [keyPressed, resetKey]);
+  }, [keyPressed, resetKey, gameOver, isSubmitting, currentInput]);
 
-  console.log(targetWord);
   const availableHintCount =
     guesses.length >= 4 ? 2 : guesses.length >= 2 ? 1 : 0;
 
   useEffect(() => {
-    const randomWord =
-      WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
-    setTargetWord(randomWord);
-  }, []);
+    if (useDailyWord) {
+      getDailyWord()
+        .then((data) => setTargetWord((data.word || "").toUpperCase()))
+        .catch(() => {
+          const fallback =
+            WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
+          setTargetWord(fallback);
+        });
+    } else {
+      getRandomWord()
+        .then((data) => setTargetWord((data.word || "").toUpperCase()))
+        .catch(() => {
+          const fallback =
+            WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
+          setTargetWord(fallback);
+        });
+    }
+  }, [useDailyWord]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (gameOver) return;
+      if (gameOver || isSubmitting) return;
       const key = e.key.toUpperCase();
 
       if (key === "DEL" || key === "BACKSPACE") {
@@ -92,12 +117,12 @@ export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gameOver, currentInput]);
+  }, [gameOver, currentInput, isSubmitting]);
 
   const checkIfWordIsValid = async (word) => {
     try {
       const response = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
       );
       if (!response.ok) return false;
       const data = await response.json();
@@ -109,11 +134,19 @@ export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
 
   const submitGuess = async () => {
     const guess = currentInput.toUpperCase();
-    const isValid = await checkIfWordIsValid(guess.toLowerCase());
+    setIsSubmitting(true);
+    haptic();
+    let isValid = false;
+    try {
+      isValid = await checkIfWordIsValid(guess.toLowerCase());
+    } catch {
+      toast.error("Could not verify word. Check your connection.");
+      setIsSubmitting(false);
+      return;
+    }
     if (!isValid) {
-      toast.error("Not a valid English word.", {
-        duration: 5000,
-      });
+      toast.error("Not a valid English word.", { duration: 5000 });
+      setIsSubmitting(false);
       return;
     }
 
@@ -122,15 +155,29 @@ export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
     const newGuesses = [...guesses, newGuess];
     setGuesses(newGuesses);
     setCurrentInput("");
+    setIsSubmitting(false);
 
+    const attempts = newGuesses.length;
     if (guess === targetWord) {
+      haptic();
       setIsWinner(true);
       setGameOver(true);
-      onGameEnd?.({ result: "win", word: targetWord });
+      onGameEnd?.({
+        result: "win",
+        word: targetWord,
+        lastGuessStatus: status,
+        attempts,
+      });
     } else if (newGuesses.length >= MAX_ATTEMPTS) {
+      haptic();
       setIsWinner(false);
       setGameOver(true);
-      onGameEnd?.({ result: "loss", word: targetWord });
+      onGameEnd?.({
+        result: "loss",
+        word: targetWord,
+        lastGuessStatus: status,
+        attempts,
+      });
     }
   };
 
@@ -159,6 +206,11 @@ export default function GameBoard({ username = "Player", onGameEnd, isDark }) {
             }
           })}
         </div>
+        {isSubmitting && (
+          <p className="text-sm text-white/70 mt-2 animate-pulse">
+            Checking word…
+          </p>
+        )}
       </div>
       <div className="w-full max-w-md">
         <HintCard

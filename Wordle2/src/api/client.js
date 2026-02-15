@@ -49,3 +49,41 @@ export async function getMe() {
 export async function logout() {
   await authFetch("/api/auth/logout", { method: "POST" });
 }
+
+export async function createGame(payload) {
+  const res = await authFetch("/api/games", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Failed to save game.");
+  return data;
+}
+
+export async function getGamesHistory() {
+  const res = await authFetch("/api/games/history");
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return data.games || [];
+}
+
+export async function getDailyWord() {
+  const res = await authFetch("/api/words/daily");
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Failed to get daily word.");
+  return data;
+}
+
+export async function getRandomWord() {
+  const res = await authFetch("/api/words/random");
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Failed to get random word.");
+  return data;
+}
+
+export async function getLeaderboard(period = "all") {
+  const res = await authFetch(`/api/leaderboard?period=${period}`);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) return { leaderboard: [], period };
+  return data;
+}

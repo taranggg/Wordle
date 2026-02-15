@@ -1,11 +1,10 @@
 export const initialState = {
-  name: "",
+  firstName: "",
   lastName: "",
   username: "",
   email: "",
   password: "",
   confirmPassword: "",
-  age: "",
   gender: "",
 };
 
@@ -24,15 +23,14 @@ export function formReducer(state, action) {
 }
 export function validateForm(state) {
   const errors = {};
-  if (!state.name) errors.name = "First name is required.";
-  if (!state.lastName) errors.lastName = "Last name is required.";
-  if (!state.username) errors.username = "Username is required.";
-  if (!state.email) errors.email = "Email is required.";
+  if (!state.firstName?.trim()) errors.firstName = "First name is required.";
+  if (!state.username?.trim()) errors.username = "Username is required.";
+  if (!state.email?.trim()) errors.email = "Email is required.";
   if (!state.password) errors.password = "Password is required.";
-  if (state.password !== state.confirmPassword)
-    errors.confirmPassword = "Passwords do not match.";
   if (state.password && state.password.length < 8)
     errors.password = "Password must be at least 8 characters.";
+  if (state.password !== state.confirmPassword)
+    errors.confirmPassword = "Passwords do not match.";
   if (state.gender) {
     const allowed = ["male", "female", "other", "preferNotToSay"];
     if (!allowed.includes(state.gender)) errors.gender = "Invalid selection.";

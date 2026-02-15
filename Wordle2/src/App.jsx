@@ -8,6 +8,7 @@ import { KeyboardProvider } from "./context/KeyboardContext.jsx";
 import { Routes, Route } from "react-router-dom";
 import Register from "./auth/Register.jsx";
 import Login from "./auth/login.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
   const [dayWord, setDayWord] = useState({
@@ -56,6 +57,7 @@ function App() {
             <Route path="/" element={<Home dayWord={dayWord} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </KeyboardProvider>
       </AuthProvider>

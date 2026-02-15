@@ -5,6 +5,9 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/db");
 const authRouter = require("./routes/auth");
+const gamesRouter = require("./routes/games");
+const wordsRouter = require("./routes/words");
+const leaderboardRouter = require("./routes/leaderboard");
 
 const app = express();
 
@@ -31,6 +34,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/games", gamesRouter);
+app.use("/api/words", wordsRouter);
+app.use("/api/leaderboard", leaderboardRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

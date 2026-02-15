@@ -1,15 +1,44 @@
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn, UserPlus, Share2 } from "lucide-react";
+import toast from "react-hot-toast";
+
+function statusToEmoji(s) {
+  return s === "correct" ? "🟩" : s === "present" ? "🟨" : "⬛";
+}
 
 export default function GameEndModal({
   isOpen,
   isWin,
   answer,
+  attempts = 6,
+  lastGuessStatus = [],
   onPlayAgain,
   guestLimitReached,
   onLoginClick,
   onSignupClick,
 }) {
+  const [shared, setShared] = useState(false);
+
+  const handleShare = async () => {
+    const row =
+      Array.isArray(lastGuessStatus) && lastGuessStatus.length === 5
+        ? lastGuessStatus.map(statusToEmoji).join("")
+        : isWin
+          ? "🟩🟩🟩🟩🟩"
+          : "⬛⬛⬛⬛⬛";
+    const text = `Wordle ${attempts}/6\n\n${row}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setShared(true);
+      toast.success("Copied to clipboard!");
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+
+  const canShare =
+    !guestLimitReached && (attempts > 0 || lastGuessStatus?.length === 5);
   return (
     <AnimatePresence>
       {isOpen && (
@@ -89,14 +118,26 @@ export default function GameEndModal({
                 </button>
               </div>
             ) : (
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: -5 }}
-                whileTap={{ scale: 0.95, rotate: 5 }}
-                className="mt-2 px-6 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-pink-400 text-white font-bold text-lg shadow-lg border-2 border-white/60 hover:from-pink-400 hover:to-yellow-400 transition-all duration-200"
-                onClick={onPlayAgain}
-              >
-                {isWin ? "Play Again! 🚀" : "Try Again! 🔄"}
-              </motion.button>
+              <div className="flex flex-col sm:flex-row gap-2 mt-2 w-full items-center justify-center">
+                {canShare && (
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-slate-600 hover:bg-slate-700 text-white font-semibold text-sm transition"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    {shared ? "Copied!" : "Share"}
+                  </button>
+                )}
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: -5 }}
+                  whileTap={{ scale: 0.95, rotate: 5 }}
+                  className="px-6 py-2 rounded-full bg-gradient-to-r from-yellow-400 to-pink-400 text-white font-bold text-lg shadow-lg border-2 border-white/60 hover:from-pink-400 hover:to-yellow-400 transition-all duration-200"
+                  onClick={onPlayAgain}
+                >
+                  {isWin ? "Play Again! 🚀" : "Try Again! 🔄"}
+                </motion.button>
+              </div>
             )}
 
             <div className="absolute -top-6 right-6 text-3xl animate-spin-slow select-none pointer-events-none">

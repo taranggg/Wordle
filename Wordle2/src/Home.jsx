@@ -11,6 +11,7 @@ import { useWindowDimensions } from "./hooks/dimensions";
 import wordleLogo from "./assets/wordlelogo.png";
 import WordOfTheDay from "./components/Wotd.jsx";
 import OnScreenKeyboard from "./components/OnScreenKeyboard.jsx";
+import { createGame, getGamesHistory } from "./api/client";
 
 const GUEST_GAMES_STORAGE_KEY = "wordle_guest_games_count";
 export const GUEST_GAMES_LIMIT = 8;
@@ -35,7 +36,6 @@ function HomeMobile({
   toggleMenu,
   setMenuOpen,
   dayWord,
-  handleKeyInput,
   recentGames,
   onGameEndAddHistory,
   user,
@@ -44,21 +44,38 @@ function HomeMobile({
   guestGamesLimit,
   onLoginClick,
   onSignupClick,
+  isDailyMode,
+  setIsDailyMode,
+  gameKey,
+  setGameKey,
 }) {
   const [gameEnd, setGameEnd] = useState({
     open: false,
     win: false,
     answer: "",
+    lastGuessStatus: [],
+    attempts: 0,
   });
-  const [gameKey, setGameKey] = useState(0);
 
-  const handleGameEndModal = ({ result, word }) => {
-    setGameEnd({ open: true, win: result === "win", answer: word });
-    onGameEndAddHistory && onGameEndAddHistory({ result, word });
+  const handleGameEndModal = (payload) => {
+    setGameEnd({
+      open: true,
+      win: payload.result === "win",
+      answer: payload.word,
+      lastGuessStatus: payload.lastGuessStatus,
+      attempts: payload.attempts,
+    });
+    onGameEndAddHistory && onGameEndAddHistory(payload);
   };
 
   const handlePlayAgain = () => {
-    setGameEnd({ open: false, win: false, answer: "" });
+    setGameEnd({
+      open: false,
+      win: false,
+      answer: "",
+      lastGuessStatus: [],
+      attempts: 0,
+    });
     setGameKey((k) => k + 1);
   };
 
@@ -123,16 +140,38 @@ function HomeMobile({
         isGuest={!user}
       />
 
+      <div className="flex gap-2 justify-center mt-2">
+        <button
+          type="button"
+          onClick={() => setIsDailyMode(false)}
+          className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+            !isDailyMode ? "bg-green-600 text-white" : "bg-white/20"
+          }`}
+        >
+          Random
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsDailyMode(true)}
+          className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+            isDailyMode ? "bg-green-600 text-white" : "bg-white/20"
+          }`}
+        >
+          Daily
+        </button>
+      </div>
+
       <div className="flex-1 mt-4 mb-10">
         <GameBoard
           key={gameKey}
           username={user?.username ?? "Guest"}
           onGameEnd={handleGameEndModal}
           isDark={isDark}
+          useDailyWord={isDailyMode}
         />
       </div>
 
-      <OnScreenKeyboard onKeyPress={handleKeyInput} />
+      <OnScreenKeyboard isDark={isDark} />
 
       <MenuModal
         isOpen={menuOpen}
@@ -150,6 +189,8 @@ function HomeMobile({
         isOpen={gameEnd.open}
         isWin={gameEnd.win}
         answer={gameEnd.answer}
+        attempts={gameEnd.attempts}
+        lastGuessStatus={gameEnd.lastGuessStatus}
         onPlayAgain={handlePlayAgain}
         guestLimitReached={guestLimitReached}
         onLoginClick={onLoginClick}
@@ -175,21 +216,38 @@ function HomeDesk({
   guestGamesLimit,
   onLoginClick,
   onSignupClick,
+  isDailyMode,
+  setIsDailyMode,
+  gameKey,
+  setGameKey,
 }) {
   const [gameEnd, setGameEnd] = useState({
     open: false,
     win: false,
     answer: "",
+    lastGuessStatus: [],
+    attempts: 0,
   });
-  const [gameKey, setGameKey] = useState(0);
 
-  const handleGameEndModal = ({ result, word }) => {
-    setGameEnd({ open: true, win: result === "win", answer: word });
-    onGameEndAddHistory && onGameEndAddHistory({ result, word });
+  const handleGameEndModal = (payload) => {
+    setGameEnd({
+      open: true,
+      win: payload.result === "win",
+      answer: payload.word,
+      lastGuessStatus: payload.lastGuessStatus,
+      attempts: payload.attempts,
+    });
+    onGameEndAddHistory && onGameEndAddHistory(payload);
   };
 
   const handlePlayAgain = () => {
-    setGameEnd({ open: false, win: false, answer: "" });
+    setGameEnd({
+      open: false,
+      win: false,
+      answer: "",
+      lastGuessStatus: [],
+      attempts: 0,
+    });
     setGameKey((k) => k + 1);
   };
 
@@ -280,6 +338,30 @@ function HomeDesk({
           <p className="text-gray-500 text-lg flex items-center drop-shadow-lg">
             Guess the word in Six tries...
           </p>
+          <div className="flex gap-2 mt-2">
+            <button
+              type="button"
+              onClick={() => setIsDailyMode(false)}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                !isDailyMode
+                  ? "bg-green-600 text-white"
+                  : "bg-white/20 hover:bg-white/30"
+              }`}
+            >
+              Random
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsDailyMode(true)}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                isDailyMode
+                  ? "bg-green-600 text-white"
+                  : "bg-white/20 hover:bg-white/30"
+              }`}
+            >
+              Daily
+            </button>
+          </div>
         </div>
         <ProfileButton
           isDark={isDark}
@@ -295,6 +377,7 @@ function HomeDesk({
           username={user?.username ?? "Guest"}
           onGameEnd={handleGameEndModal}
           isDark={isDark}
+          useDailyWord={isDailyMode}
         />
       </div>
 
@@ -318,6 +401,8 @@ function HomeDesk({
         isOpen={gameEnd.open}
         isWin={gameEnd.win}
         answer={gameEnd.answer}
+        attempts={gameEnd.attempts}
+        lastGuessStatus={gameEnd.lastGuessStatus}
         onPlayAgain={handlePlayAgain}
         guestLimitReached={guestLimitReached}
         onLoginClick={onLoginClick}
@@ -342,6 +427,9 @@ export default function Home({ dayWord }) {
       return [];
     }
   });
+  const [serverGames, setServerGames] = useState([]);
+  const [isDailyMode, setIsDailyMode] = useState(false);
+  const [gameKey, setGameKey] = useState(0);
 
   const isGuest = !user;
   const guestLimitReached = isGuest && guestGamesPlayed >= GUEST_GAMES_LIMIT;
@@ -351,12 +439,38 @@ export default function Home({ dayWord }) {
   }, [recentGames]);
 
   useEffect(() => {
+    if (user) {
+      getGamesHistory()
+        .then((games) => setServerGames(games))
+        .catch(() => setServerGames([]));
+    } else {
+      setServerGames([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
     localStorage.setItem(GUEST_GAMES_STORAGE_KEY, String(guestGamesPlayed));
   }, [guestGamesPlayed]);
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
-  const handleGameEndAddHistory = ({ result, word }) => {
+  const statusToColor = (s) =>
+    s === "correct" ? "green" : s === "present" ? "yellow" : "gray";
+
+  const fetchServerHistory = () => {
+    if (user) {
+      getGamesHistory()
+        .then((games) => setServerGames(games))
+        .catch(() => {});
+    }
+  };
+
+  const handleGameEndAddHistory = ({
+    result,
+    word,
+    lastGuessStatus = [],
+    attempts = 6,
+  }) => {
     const now = new Date();
     const timeString = now.toLocaleString("en-US", {
       month: "short",
@@ -364,6 +478,10 @@ export default function Home({ dayWord }) {
       hour: "2-digit",
       minute: "2-digit",
     });
+    const colors = Array.isArray(lastGuessStatus)
+      ? lastGuessStatus.map(statusToColor)
+      : [];
+    const score = result === "win" ? 100 : 10;
     setRecentGames((prev) => [
       {
         id: prev.length ? prev[0].id + 1 : 1,
@@ -371,29 +489,57 @@ export default function Home({ dayWord }) {
         time: timeString,
         status: result === "win" ? "WON" : "LOST",
         result: result === "win" ? "✔" : "✗",
-        points: result === "win" ? "+100 points" : "+10 points",
+        points: `+${score} points`,
         duration: "-",
-        colors: [],
+        colors,
       },
       ...prev,
     ]);
     if (isGuest && guestGamesPlayed < GUEST_GAMES_LIMIT) {
       setGuestGamesPlayed((c) => Math.min(c + 1, GUEST_GAMES_LIMIT));
     }
+    if (user) {
+      createGame({
+        wordText: word,
+        attempts,
+        status: result === "win" ? "win" : "loss",
+        score,
+      })
+        .then(() => fetchServerHistory())
+        .catch(() => {});
+    }
   };
 
   const onLoginClick = () => navigate("/login");
   const onSignupClick = () => navigate("/register");
 
-  const handleKeyInput = (key) => {
-    // TODO: forward this to GameBoard if needed
-  };
+  // On-screen keyboard is wired via KeyboardContext (OnScreenKeyboard calls pressKey, GameBoard uses keyPressed)
 
   const backgroundStyle = {
     background: isDark
       ? "linear-gradient(135deg, #232526 0%, #770101 100%)"
       : "linear-gradient(135deg, #a8edea 0%, #FCE8AF 100%)",
   };
+
+  const displayGames = user
+    ? serverGames.map((g, i) => ({
+        id: g._id || i,
+        word: (g.wordText || "").toUpperCase(),
+        time: g.createdAt
+          ? new Date(g.createdAt).toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "-",
+        status: g.status === "win" ? "WON" : "LOST",
+        result: g.status === "win" ? "✔" : "✗",
+        points: `+${g.score || 0} points`,
+        duration: "-",
+        colors: [],
+      }))
+    : recentGames;
 
   const homeProps = {
     backgroundStyle,
@@ -403,8 +549,7 @@ export default function Home({ dayWord }) {
     toggleMenu,
     setMenuOpen,
     dayWord,
-    handleKeyInput,
-    recentGames,
+    recentGames: displayGames,
     onGameEndAddHistory: handleGameEndAddHistory,
     user,
     guestLimitReached,
@@ -412,6 +557,13 @@ export default function Home({ dayWord }) {
     guestGamesLimit: GUEST_GAMES_LIMIT,
     onLoginClick,
     onSignupClick,
+    isDailyMode,
+    setIsDailyMode: (v) => {
+      setIsDailyMode(v);
+      setGameKey((k) => k + 1);
+    },
+    gameKey,
+    setGameKey,
   };
 
   return isMobile ? <HomeMobile {...homeProps} /> : <HomeDesk {...homeProps} />;

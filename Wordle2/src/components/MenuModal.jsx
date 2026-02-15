@@ -1,8 +1,18 @@
+import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import { History, X, LogOut, LogIn, UserPlus } from "lucide-react";
+import {
+  History,
+  X,
+  LogOut,
+  LogIn,
+  UserPlus,
+  Trophy,
+  User,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import HistorySection from "./HistorySection";
+import LeaderboardSection from "./LeaderboardSection";
 import { useWindowDimensions } from "../hooks/dimensions";
 import WordOfTheDay from "./Wotd";
 import { useAuth } from "../context/AuthContext";
@@ -20,6 +30,7 @@ export default function MenuModal({
   const { isMobile } = useWindowDimensions();
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [tab, setTab] = useState("history");
 
   const handleLogout = async () => {
     onClose();
@@ -78,27 +89,30 @@ export default function MenuModal({
             <X className="w-6 h-6" />
           </button>
 
-          {/* Only show History tab for now */}
           <div className="flex bg-white/10 rounded-full overflow-hidden mb-4 w-fit mx-auto p-1 shadow-inner">
-            {/*
             <button
+              type="button"
+              onClick={() => setTab("history")}
+              className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
+                tab === "history"
+                  ? "bg-green-600 text-white shadow-md"
+                  : "text-gray-300 hover:text-white"
+              }`}
+            >
+              <History className="w-4 h-4" />
+              History
+            </button>
+            <button
+              type="button"
               onClick={() => setTab("leaderboard")}
-              className={`px-5 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm ${
+              className={`px-4 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm rounded-full ${
                 tab === "leaderboard"
                   ? "bg-green-600 text-white shadow-md"
-                  : "text-gray-300"
-              } rounded-full`}
+                  : "text-gray-300 hover:text-white"
+              }`}
             >
-              <Trophy className="w-5 h-5" />
+              <Trophy className="w-4 h-4" />
               Leaderboard
-            </button>
-            */}
-            <button
-              className={`px-5 py-2 font-semibold flex items-center justify-center gap-2 transition-all text-sm bg-green-600 text-white shadow-md rounded-full`}
-              disabled
-            >
-              <History className="w-5 h-5" />
-              History
             </button>
           </div>
 
@@ -106,9 +120,12 @@ export default function MenuModal({
           <div className="mb-4 flex justify-center">
             <WordOfTheDay isDark={isDark} dayWord={dayWord} />
           </div>
-          {/* Only show History content */}
           <div className="flex-1 w-full overflow-hidden min-h-0">
-            <HistorySection isDark={isDark} recentGames={recentGames} />
+            {tab === "history" ? (
+              <HistorySection isDark={isDark} recentGames={recentGames} />
+            ) : (
+              <LeaderboardSection isDark={isDark} />
+            )}
           </div>
 
           {/* Auth: Sign in / Sign up for guest, Sign out for logged-in */}
@@ -139,14 +156,24 @@ export default function MenuModal({
                 </Link>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-300 hover:bg-white/10 transition"
-              >
-                <LogOut className="w-5 h-5" />
-                Sign out
-              </button>
+              <>
+                <Link
+                  to="/profile"
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-green-300 hover:bg-white/10 transition"
+                >
+                  <User className="w-5 h-5" />
+                  Profile & stats
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-300 hover:bg-white/10 transition"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign out
+                </button>
+              </>
             )}
           </div>
         </motion.div>
