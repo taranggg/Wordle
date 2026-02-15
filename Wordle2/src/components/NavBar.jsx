@@ -65,14 +65,18 @@ export function MenuButton({ onClick, isDark }) {
 }
 
 // Desktop Profile Button
-export function ProfileButton({ isDark, user, toggleTheme }) {
+export function ProfileButton({ isDark, user, toggleTheme, iconSize = 22 }) {
   const iconColor = isDark ? "#fff" : "#222";
   // const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <>
-      {/* Theme Toggle replaces Profile Button */}
-      <ThemeToggleButton toggled={isDark} onToggle={toggleTheme} />
+      {/* Theme Toggle replaces Profile Button – same size as other nav icons */}
+      <ThemeToggleButton
+        toggled={isDark}
+        onToggle={toggleTheme}
+        size={iconSize}
+      />
       {/*
       <button
         onClick={() => setIsProfileOpen(true)}

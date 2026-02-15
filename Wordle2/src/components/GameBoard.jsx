@@ -50,6 +50,8 @@ export default function GameBoard({
   isGuest = false,
   compactHint = false,
   denseDesktop = false,
+  hideHint = false,
+  onHintData,
 }) {
   const [targetWord, setTargetWord] = useState("");
   const [guesses, setGuesses] = useState([]);
@@ -193,50 +195,69 @@ export default function GameBoard({
 
   const hints = targetWord ? getWordHint(targetWord) : [];
 
+  useEffect(() => {
+    onHintData?.({ hints, availableHintCount });
+  }, [hints, availableHintCount, onHintData]);
+
   const isDense = compactHint || denseDesktop;
   return (
     <div
       className={`w-full flex flex-col items-center ${isDense ? "gap-2 sm:gap-3" : "gap-8 md:gap-10"} ${denseDesktop ? "max-w-md" : ""}`}
     >
+      {/* No outer box – just the grid of cells */}
       <div
-        className={`relative flex flex-col items-center justify-center w-full mx-auto rounded-2xl bg-white/20 backdrop-blur-md shadow-xl border border-white/30 ${denseDesktop ? "p-2 sm:p-4" : "p-3 sm:p-6 md:p-8"} max-w-md`}
+        className={`relative flex flex-col items-center justify-center w-full mx-auto ${denseDesktop ? "space-y-1.5" : "space-y-1 sm:space-y-3"}`}
       >
-        <div
-          className={`w-full ${isDense ? "space-y-0.5 sm:space-y-1" : "space-y-1 sm:space-y-3"}`}
-        >
-          {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => {
-            if (i < guesses.length) {
-              return <GuessRow key={i} guess={guesses[i]} animate={true} />;
-            } else if (i === guesses.length && !gameOver) {
-              return (
-                <GuessRow
-                  key={i}
-                  guess={{
-                    word: currentInput.padEnd(WORD_LENGTH),
-                    status: [],
-                  }}
-                  isDark={isDark}
-                />
-              );
-            } else {
-              return <GuessRow key={i} guess={null} isDark={isDark} />;
-            }
-          })}
+        {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => {
+          if (i < guesses.length) {
+            return (
+              <GuessRow
+                key={i}
+                guess={guesses[i]}
+                animate={true}
+                isDark={isDark}
+                compact={denseDesktop}
+              />
+            );
+          } else if (i === guesses.length && !gameOver) {
+            return (
+              <GuessRow
+                key={i}
+                guess={{
+                  word: currentInput.padEnd(WORD_LENGTH),
+                  status: [],
+                }}
+                isDark={isDark}
+                compact={denseDesktop}
+              />
+            );
+          } else {
+            return (
+              <GuessRow
+                key={i}
+                guess={null}
+                isDark={isDark}
+                compact={denseDesktop}
+              />
+            );
+          }
+        })}
+      </div>
+      {isSubmitting && (
+        <p className="text-sm text-white/70 mt-2 animate-pulse">
+          Checking word…
+        </p>
+      )}
+      {!hideHint && (
+        <div className={`w-full ${denseDesktop ? "max-w-md" : "max-w-md"}`}>
+          <HintCard
+            hints={hints}
+            availableHintCount={availableHintCount}
+            isDark={isDark}
+            compact={denseDesktop}
+          />
         </div>
-        {isSubmitting && (
-          <p className="text-sm text-white/70 mt-2 animate-pulse">
-            Checking word…
-          </p>
-        )}
-      </div>
-      <div className={`w-full ${denseDesktop ? "max-w-md" : "max-w-md"}`}>
-        <HintCard
-          hints={hints}
-          availableHintCount={availableHintCount}
-          isDark={isDark}
-          compact={denseDesktop}
-        />
-      </div>
+      )}
     </div>
   );
 }

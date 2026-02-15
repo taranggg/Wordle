@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import "../style/GuessCell.css";
 
-export default function GuessCell({ letter = "", status = "", isDark }) {
+export default function GuessCell({
+  letter = "",
+  status = "",
+  isDark,
+  compact,
+}) {
   const [animate, setAnimate] = useState(false);
   const [prevLetter, setPrevLetter] = useState("");
 
@@ -14,12 +19,13 @@ export default function GuessCell({ letter = "", status = "", isDark }) {
     setPrevLetter(letter);
   }, [letter]);
 
-  const base =
-    "min-w-0 w-10 h-10 text-base " +
-    "sm:w-12 sm:h-12 sm:text-lg " +
-    "md:w-14 md:h-14 md:text-xl " +
-    "lg:w-16 lg:h-16 lg:text-2xl " +
-    "flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1";
+  const base = compact
+    ? "min-w-0 w-10 h-10 text-base flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1"
+    : "min-w-0 w-10 h-10 text-base " +
+      "sm:w-12 sm:h-12 sm:text-lg " +
+      "md:w-14 md:h-14 md:text-xl " +
+      "lg:w-16 lg:h-16 lg:text-2xl " +
+      "flex items-center justify-center border font-bold uppercase rounded transition-all duration-300 mx-1";
 
   const statusColors = isDark
     ? {

@@ -1,13 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 
-export default function ThemeToggleButton({ toggled, onToggle }) {
+export default function ThemeToggleButton({ toggled, onToggle, size = 24 }) {
   return (
     <button
       onClick={onToggle}
       aria-label="Toggle theme"
-      className="relative flex items-center justify-center focus:outline-none"
-      style={{ width: "2.5rem", height: "2.5rem" }}
+      className="relative flex items-center justify-center focus:outline-none p-1 rounded-full hover:opacity-80 transition-opacity"
+      style={{ width: size + 8, height: size + 8 }}
     >
       <AnimatePresence initial={false} mode="wait">
         {toggled ? (
@@ -18,9 +18,9 @@ export default function ThemeToggleButton({ toggled, onToggle }) {
             exit={{ rotate: -90, opacity: 0, scale: 0.7 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="absolute"
-            style={{ color: "#FACC15", fontSize: "2.5rem" }}
+            style={{ color: "#FACC15" }}
           >
-            <Moon size={40} />
+            <Moon size={size} />
           </motion.span>
         ) : (
           <motion.span
@@ -30,9 +30,9 @@ export default function ThemeToggleButton({ toggled, onToggle }) {
             exit={{ rotate: 90, opacity: 0, scale: 0.7 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="absolute"
-            style={{ color: "#374151", fontSize: "2.5rem" }}
+            style={{ color: "#374151" }}
           >
-            <Sun size={40} />
+            <Sun size={size} />
           </motion.span>
         )}
       </AnimatePresence>
