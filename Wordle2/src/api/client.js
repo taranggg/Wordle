@@ -1,3 +1,5 @@
+const DEFAULT_TIMEOUT_MS = 15000;
+
 const getApiUrl = () => import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export function apiUrl(path) {
@@ -8,15 +10,23 @@ export function apiUrl(path) {
 
 export async function authFetch(path, options = {}) {
   const url = apiUrl(path);
-  const res = await fetch(url, {
-    ...options,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-  return res;
+  const timeoutMs = options.timeout ?? DEFAULT_TIMEOUT_MS;
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: options.signal ?? controller.signal,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
 }
 
 export async function signin(emailOrUsername, password) {

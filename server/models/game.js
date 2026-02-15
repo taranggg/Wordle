@@ -15,5 +15,7 @@ const gameSchema = mongoose.Schema(
   { timestamps: true },
 );
 
+gameSchema.index({ userId: 1, createdAt: -1 });
+
 const Game = mongoose.model("Game", gameSchema);
 module.exports = Game;
