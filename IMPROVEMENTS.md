@@ -1,6 +1,6 @@
 # Wordle Project — Improvements & Fixes
 
-A prioritized list of bugs to fix and features to add, based on project analysis.
+A prioritized list of bugs to fix and features to add. Updated as work is completed.
 
 ---
 
@@ -16,7 +16,7 @@ A prioritized list of bugs to fix and features to add, based on project analysis
 
 - [x] **Register field mismatch** — Frontend sends `name`; backend User model expects `firstName` (and `lastName`). Either send `firstName`/`lastName` from the form (e.g. map `name` → `firstName`) or update the API to accept `name`.
 
-- [ ] **Play Again reloads full page** — "Play Again" uses `window.location.reload()`. Prefer resetting game state in React (new target word, clear guesses, set gameOver false) so the app doesn’t reload.
+- [x] **Play Again reloads full page** — "Play Again" uses `window.location.reload()`. Prefer resetting game state in React (new target word, clear guesses, set gameOver false) so the app doesn’t reload.
 
 ### Medium
 
@@ -42,6 +42,10 @@ A prioritized list of bugs to fix and features to add, based on project analysis
 
 - [x] **User in UI** — Use the logged-in user (from token or `/api/auth/me`) to show username/avatar in the navbar and in the menu instead of the hardcoded "Tarang".
 
+- [x] **Guest mode** — Allow playing without login/signup; limit guest to 8 games then require login/signup; guest history not stored on server.
+
+- [x] **Guest option on login page** — "Continue as Guest" button on login page that navigates to home so users can play without signing in.
+
 ### Medium priority
 
 - [ ] **Persist games on server** — When a game ends and the user is logged in, call e.g. `POST /api/games` with word, attempts, status, score, userId. Add `GET /api/games/history` and use it for the History section (replace or sync with localStorage) so history works across devices.
@@ -66,12 +70,14 @@ A prioritized list of bugs to fix and features to add, based on project analysis
 
 ## Summary
 
-| Category       | Count |
-| -------------- | ----- |
-| Critical fixes | 1     |
-| High fixes     | 3     |
-| Medium fixes   | 3     |
-| Low fixes      | 1     |
-| New features   | 10+   |
+| Category                 | Total | Done | Remaining |
+| ------------------------ | ----- | ---- | --------- |
+| Critical fixes           | 1     | 1    | 0         |
+| High fixes               | 3     | 3    | 0         |
+| Medium fixes             | 3     | 0    | 3         |
+| Low fixes                | 1     | 0    | 1         |
+| High-priority features   | 5     | 5    | 0         |
+| Medium-priority features | 3     | 0    | 3         |
+| Lower-priority features  | 6     | 0    | 6         |
 
-Start with the **Critical** and **High** fixes, then add **Auth flow** and **Protected routes** before building persistence and leaderboard features.
+**Next suggested:** Fix medium-priority bugs (History colors, on-screen keyboard on mobile, remove `console.log(targetWord)`), then add server game persistence and leaderboard.

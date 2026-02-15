@@ -50,6 +50,7 @@ function HomeMobile({
     win: false,
     answer: "",
   });
+  const [gameKey, setGameKey] = useState(0);
 
   const handleGameEndModal = ({ result, word }) => {
     setGameEnd({ open: true, win: result === "win", answer: word });
@@ -58,7 +59,7 @@ function HomeMobile({
 
   const handlePlayAgain = () => {
     setGameEnd({ open: false, win: false, answer: "" });
-    window.location.reload();
+    setGameKey((k) => k + 1);
   };
 
   if (guestLimitReached) {
@@ -124,6 +125,7 @@ function HomeMobile({
 
       <div className="flex-1 mt-4 mb-10">
         <GameBoard
+          key={gameKey}
           username={user?.username ?? "Guest"}
           onGameEnd={handleGameEndModal}
           isDark={isDark}
@@ -179,6 +181,7 @@ function HomeDesk({
     win: false,
     answer: "",
   });
+  const [gameKey, setGameKey] = useState(0);
 
   const handleGameEndModal = ({ result, word }) => {
     setGameEnd({ open: true, win: result === "win", answer: word });
@@ -187,7 +190,7 @@ function HomeDesk({
 
   const handlePlayAgain = () => {
     setGameEnd({ open: false, win: false, answer: "" });
-    window.location.reload();
+    setGameKey((k) => k + 1);
   };
 
   if (guestLimitReached) {
@@ -288,6 +291,7 @@ function HomeDesk({
 
       <div className="flex-1 flex flex-col items-center justify-center mt-4">
         <GameBoard
+          key={gameKey}
           username={user?.username ?? "Guest"}
           onGameEnd={handleGameEndModal}
           isDark={isDark}

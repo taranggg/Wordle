@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, Lock, LogIn, Loader2 } from "lucide-react";
+import { Mail, Lock, LogIn, Loader2, UserRound } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import wordleLogo from "../assets/wordlelogo.png";
 import { useAuth } from "../context/AuthContext";
@@ -114,6 +114,16 @@ export default function LoginPage({ isDark }) {
               <LogIn className="w-4 h-4" />
             )}
             {loading ? "Signing in…" : "Login"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/", { replace: true })}
+            disabled={loading}
+            className="w-full mt-3 flex items-center justify-center gap-2 py-2 px-4 rounded-lg border-2 border-white/40 hover:bg-white/10 transition text-sm font-medium opacity-90"
+          >
+            <UserRound className="w-4 h-4" />
+            Continue as Guest
           </button>
         </form>
 
