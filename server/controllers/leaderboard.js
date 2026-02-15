@@ -2,7 +2,7 @@ const Game = require("../models/game");
 
 exports.getLeaderboard = async (req, res) => {
   try {
-    const period = req.query.period || "all"; // 'daily' | 'all'
+    const period = req.query.period || "all";
     const limit = Math.min(50, parseInt(req.query.limit, 10) || 20);
 
     let match = {};
@@ -18,7 +18,7 @@ exports.getLeaderboard = async (req, res) => {
         $group: {
           _id: "$userId",
           totalScore: { $sum: "$score" },
-          wins: { $sum: { $cond: [{ $eq: ["$status", "win"] }, 1, 0] },
+          wins: { $sum: { $cond: [{ $eq: ["$status", "win"] }, 1, 0] } },
           games: { $sum: 1 },
         },
       },
@@ -52,7 +52,7 @@ exports.getLeaderboard = async (req, res) => {
     }));
 
     res.status(200).json({ success: true, leaderboard, period });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Failed to load leaderboard." });
   }
 };

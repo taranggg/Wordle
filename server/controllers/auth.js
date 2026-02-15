@@ -7,7 +7,7 @@ const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  maxAge: 24 * 60 * 60 * 1000, // 24h
+  maxAge: 24 * 60 * 60 * 1000,
   path: "/",
 };
 
@@ -65,7 +65,7 @@ exports.signin = async (req, res) => {
       message: "Signed in successfully",
       user: safeUser,
     });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Internal server error." });
   }
 };
@@ -79,11 +79,9 @@ exports.signup = async (req, res) => {
       !email?.trim() ||
       !password
     ) {
-      return res
-        .status(400)
-        .json({
-          message: "First name, username, email and password are required.",
-        });
+      return res.status(400).json({
+        message: "First name, username, email and password are required.",
+      });
     }
 
     const normalizedEmail = email.trim().toLowerCase();

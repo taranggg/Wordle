@@ -19,7 +19,7 @@ exports.createGame = async (req, res) => {
       userId: req.user._id,
     });
     res.status(201).json({ success: true, game });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Failed to save game." });
   }
 };
@@ -31,7 +31,7 @@ exports.getMyHistory = async (req, res) => {
       .limit(50)
       .lean();
     res.status(200).json({ success: true, games });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Failed to load history." });
   }
 };

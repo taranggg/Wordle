@@ -5,7 +5,7 @@ exports.getDailyWord = (req, res) => {
     const word = getDailyWord();
     const today = new Date().toISOString().slice(0, 10);
     res.status(200).json({ success: true, word, date: today });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Failed to get daily word." });
   }
 };
@@ -14,7 +14,7 @@ exports.getRandomWord = (req, res) => {
   try {
     const word = WORDS[Math.floor(Math.random() * WORDS.length)].toUpperCase();
     res.status(200).json({ success: true, word });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ message: "Failed to get random word." });
   }
 };

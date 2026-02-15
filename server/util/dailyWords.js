@@ -1,4 +1,3 @@
-// Same word list as frontend for deterministic daily word (index by date)
 const WORDS = [
   "ALBUM",
   "HINGE",

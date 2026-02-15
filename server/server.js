@@ -40,9 +40,10 @@ app.use("/api/leaderboard", leaderboardRouter);
 
 async function start() {
   await connectDB();
-  await seedAdmin();
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+  await seedAdmin().catch(() => {});
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
 }
 start();
