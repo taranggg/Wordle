@@ -2,6 +2,7 @@
 /wordle-backend/node_modules
 /wordle-backend/.env
 /wordle2/node_modules
+/wordle2/dist
 /wordle2/.env
 /server/node_modules
 /server/config/config.env
