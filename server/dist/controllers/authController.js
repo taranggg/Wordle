@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import { env } from "../config/env.js";
+import { getGoogleAuthToken } from "../config/passport.js";
 const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
@@ -50,7 +51,10 @@ export async function signin(req, res) {
             res.status(401).json({ message: genericError });
             return;
         }
-        const token = jwt.sign({ id: String(user._id) }, env.JWT_SECRET, { expiresIn: "24h", algorithm: "HS256" });
+        const token = jwt.sign({ id: String(user._id) }, env.JWT_SECRET, {
+            expiresIn: "24h",
+            algorithm: "HS256",
+        });
         setAuthCookie(res, token);
         res.status(200).json({
             success: true,
@@ -64,7 +68,7 @@ export async function signin(req, res) {
 }
 export async function signup(req, res) {
     try {
-        const { firstName, lastName, username, email, password, gender, } = req.body;
+        const { firstName, lastName, username, email, password, gender } = req.body;
         if (!firstName?.trim() ||
             !username?.trim() ||
             !email?.trim() ||
@@ -93,7 +97,10 @@ export async function signup(req, res) {
             password: hashedPassword,
             gender: gender || undefined,
         });
-        const token = jwt.sign({ id: String(user._id) }, env.JWT_SECRET, { expiresIn: "24h", algorithm: "HS256" });
+        const token = jwt.sign({ id: String(user._id) }, env.JWT_SECRET, {
+            expiresIn: "24h",
+            algorithm: "HS256",
+        });
         setAuthCookie(res, token);
         res.status(201).json({
             success: true,
@@ -104,9 +111,7 @@ export async function signup(req, res) {
     catch (err) {
         const e = err;
         if (e.name === "ValidationError") {
-            res
-                .status(400)
-                .json({ message: e.message ?? "Validation failed." });
+            res.status(400).json({ message: e.message ?? "Validation failed." });
             return;
         }
         res.status(500).json({ message: "Internal server error." });
@@ -145,5 +150,15 @@ export async function me(req, res) {
 export function logout(_req, res) {
     clearAuthCookie(res);
     res.status(200).json({ success: true, message: "Signed out." });
+}
+export function googleCallback(req, res) {
+    const user = req.user;
+    if (!user) {
+        res.redirect(`${env.FRONTEND_ORIGIN}/login?error=google`);
+        return;
+    }
+    const token = getGoogleAuthToken(user);
+    setAuthCookie(res, token);
+    res.redirect(env.FRONTEND_ORIGIN);
 }
 //# sourceMappingURL=authController.js.map

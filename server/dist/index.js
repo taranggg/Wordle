@@ -1,4 +1,5 @@
 import "./config/env.js";
+import "./config/passport.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";

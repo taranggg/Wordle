@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import { env } from "../config/env.js";
+import { getGoogleAuthToken } from "../config/passport.js";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -190,4 +191,24 @@ export async function me(req: Request, res: Response): Promise<void> {
 export function logout(_req: Request, res: Response): void {
   clearAuthCookie(res);
   res.status(200).json({ success: true, message: "Signed out." });
+}
+
+export function googleCallback(req: Request, res: Response): void {
+  const user = req.user as
+    | {
+        _id: unknown;
+        username: string;
+        email: string;
+        firstName: string;
+        lastName?: string;
+        avatar?: string;
+      }
+    | undefined;
+  if (!user) {
+    res.redirect(`${env.FRONTEND_ORIGIN}/login?error=google`);
+    return;
+  }
+  const token = getGoogleAuthToken(user);
+  setAuthCookie(res, token);
+  res.redirect(env.FRONTEND_ORIGIN);
 }

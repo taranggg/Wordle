@@ -1,13 +1,24 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
+import passport from "passport";
 import rateLimit from "express-rate-limit";
-import { signin, signup, me, logout } from "../controllers/authController.js";
+import {
+  signin,
+  signup,
+  me,
+  logout,
+  googleCallback,
+} from "../controllers/authController.js";
 import {
   signinValidation,
   signupValidation,
   handleValidationErrors,
 } from "../middleware/validateAuth.js";
+import { env } from "../config/env.js";
 
-const authRouter = Router();
+const authRouter: Router = Router();
+
+const hasGoogleConfig = () =>
+  Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
 
 const signinLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -41,5 +52,38 @@ authRouter.post(
 );
 authRouter.get("/me", me);
 authRouter.post("/logout", logout);
+
+authRouter.get("/google", (req: Request, res: Response, next: NextFunction) => {
+  if (!hasGoogleConfig()) {
+    res.status(503).json({ message: "Google sign-in is not configured." });
+    return;
+  }
+  passport.authenticate("google", { scope: ["profile", "email"] })(
+    req,
+    res,
+    next,
+  );
+});
+authRouter.get(
+  "/google/callback",
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!hasGoogleConfig()) {
+      res.redirect(`${env.FRONTEND_ORIGIN}/login?error=google`);
+      return;
+    }
+    passport.authenticate(
+      "google",
+      { session: false },
+      (err: unknown, user: unknown) => {
+        if (err || !user) {
+          res.redirect(`${env.FRONTEND_ORIGIN}/login?error=google`);
+          return;
+        }
+        req.user = user;
+        googleCallback(req, res);
+      },
+    )(req, res, next);
+  },
+);
 
 export default authRouter;

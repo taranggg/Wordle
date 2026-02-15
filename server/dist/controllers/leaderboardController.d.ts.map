@@ -1,1 +1,1 @@
-{"version":3,"file":"leaderboardController.d.ts","sourceRoot":"","sources":["../../src/controllers/leaderboardController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAW5C,wBAAsB,cAAc,CAClC,GAAG,EAAE,OAAO,EACZ,GAAG,EAAE,QAAQ,GACZ,OAAO,CAAC,IAAI,CAAC,CAyDf"}
+{"version":3,"file":"leaderboardController.d.ts","sourceRoot":"","sources":["../../src/controllers/leaderboardController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAW5C,wBAAsB,cAAc,CAClC,GAAG,EAAE,OAAO,EACZ,GAAG,EAAE,QAAQ,GACZ,OAAO,CAAC,IAAI,CAAC,CAiEf"}

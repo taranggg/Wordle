@@ -7,3 +7,4 @@
 /server/node_modules
 /server/config/config.env
 /server/package-lock.json
+node_modules

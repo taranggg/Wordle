@@ -91,12 +91,17 @@ MONGO_URL=mongodb://localhost:27017/wordle
 
 ## Environment variables
 
-| Variable        | Required | Description                                    |
-| --------------- | -------- | ---------------------------------------------- |
-| MONGO_URL       | Yes      | MongoDB connection string (Atlas or local).    |
-| PORT            | No       | Server port (default 5000).                    |
-| JWT_SECRET      | Yes      | Secret for signing tokens (min 32 chars).      |
-| FRONTEND_ORIGIN | No       | Allowed CORS origin (default localhost:5173).  |
-| ADMIN_USERNAME  | No       | Seed admin username (default admin).           |
-| ADMIN_EMAIL     | No       | Seed admin email (default admin@wordle.local). |
-| ADMIN_PASSWORD  | No       | Seed admin password (default Admin@123).       |
+| Variable             | Required | Description                                                                          |
+| -------------------- | -------- | ------------------------------------------------------------------------------------ |
+| MONGO_URL            | Yes      | MongoDB connection string (Atlas or local).                                          |
+| PORT                 | No       | Server port (default 5000).                                                          |
+| JWT_SECRET           | Yes      | Secret for signing tokens (min 32 chars).                                            |
+| FRONTEND_ORIGIN      | No       | Allowed CORS origin (default localhost:5173).                                        |
+| ADMIN_USERNAME       | No       | Seed admin username (default admin).                                                 |
+| ADMIN_EMAIL          | No       | Seed admin email (default admin@wordle.local).                                       |
+| ADMIN_PASSWORD       | No       | Seed admin password (default Admin@123).                                             |
+| GOOGLE_CLIENT_ID     | No       | Google OAuth client ID (for “Sign in with Google”).                                  |
+| GOOGLE_CLIENT_SECRET | No       | Google OAuth client secret.                                                          |
+| GOOGLE_CALLBACK_URL  | No       | Override callback URL (default: \`http://localhost:PORT/api/auth/google/callback\`). |
+
+To enable **Sign in with Google**: create OAuth 2.0 credentials at [Google Cloud Console](https://console.cloud.google.com/apis/credentials), add an authorized redirect URI (e.g. `http://localhost:5000/api/auth/google/callback`), and set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `config.env`.

@@ -13,4 +13,6 @@ export const env = {
   FRONTEND_ORIGIN: (
     process.env.FRONTEND_ORIGIN ?? "http://localhost:5173"
   ).trim(),
+  GOOGLE_CLIENT_ID: (process.env.GOOGLE_CLIENT_ID ?? "").trim(),
+  GOOGLE_CLIENT_SECRET: (process.env.GOOGLE_CLIENT_SECRET ?? "").trim(),
 } as const;

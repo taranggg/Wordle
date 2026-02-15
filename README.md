@@ -42,45 +42,32 @@ Wordle/
 
 ## Getting started
 
-### 1. Backend
-
-See [server/README.md](server/README.md) for MongoDB setup and env vars.
+**Install and run both server and frontend:**
 
 ```bash
-cd server
-npm install
-# Add config/config.env (see config.env.example)
-npm run dev
+pnpm i
+pnpm dev
 ```
 
-API runs at `http://localhost:5000`.
+- **API** → `http://localhost:5000`
+- **App** → `http://localhost:5173`
 
-### 2. Frontend
+Before first run: add `server/config/config.env` (see [server/README.md](server/README.md) and `config.env.example`) for MongoDB and env vars.
+
+**Run only one:**
 
 ```bash
-cd Wordle2
-npm install
-npm run dev
+cd server && pnpm dev   # backend only
+cd Wordle2 && pnpm dev  # frontend only
 ```
 
-App runs at `http://localhost:5173`. Set `VITE_API_URL` to your API URL if different from `http://localhost:5000`.
+Set `VITE_API_URL` in the frontend if your API is not at `http://localhost:5000`.
 
-### 3. Production build
-
-**Server:**
+### Production build
 
 ```bash
-cd server
-npm run build
-npm start
-```
-
-**Client:**
-
-```bash
-cd Wordle2
-npm run build
-# Serve the dist/ folder (e.g. with a static host or your backend)
+cd server && pnpm build && pnpm start
+cd Wordle2 && pnpm build   # output in dist/
 ```
 
 ## How to play

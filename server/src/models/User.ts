@@ -6,6 +6,7 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password?: string;
+  googleId?: string;
   gender?: string;
   avatar?: string;
   createdAt: Date;
@@ -19,6 +20,7 @@ const userSchema = new Schema<IUser>(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, select: false },
+    googleId: { type: String, sparse: true, unique: true },
     gender: { type: String },
     avatar: { type: String, default: "avatarSenku.png" },
   },

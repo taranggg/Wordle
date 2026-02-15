@@ -9,5 +9,7 @@ export const env = {
     MONGO_URL: (process.env.MONGO_URL ?? "").trim(),
     JWT_SECRET: (process.env.JWT_SECRET ?? process.env.SECRET ?? "").trim(),
     FRONTEND_ORIGIN: (process.env.FRONTEND_ORIGIN ?? "http://localhost:5173").trim(),
+    GOOGLE_CLIENT_ID: (process.env.GOOGLE_CLIENT_ID ?? "").trim(),
+    GOOGLE_CLIENT_SECRET: (process.env.GOOGLE_CLIENT_SECRET ?? "").trim(),
 };
 //# sourceMappingURL=env.js.map
