@@ -1,0 +1,16 @@
+/* Home layout: safe areas and polish */
+
+/* Mobile: keyboard area respects notches and home indicator */
+.home-mobile .pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+.home-mobile main {
+  /* Allow scroll when content is tall; keyboard stays at bottom */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop: constrain game column for comfortable reading on large screens */
+.home-desk main {
+  min-height: 0;
+}

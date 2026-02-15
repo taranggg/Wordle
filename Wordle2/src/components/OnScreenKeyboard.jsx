@@ -10,7 +10,7 @@ const KEYS = [
   ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE"],
 ];
 
-export default function OnScreenKeyboard({ isDark }) {
+export default function OnScreenKeyboard({ isDark, compact = false }) {
   const getKeyColor = (key) => {
     const orangeKeys = ["ENTER", "BACKSPACE", "E", "R", "T", "Y", "O", "L"];
     return orangeKeys.includes(key) ? "bg-orange-400/25" : "bg-black/10";
@@ -20,21 +20,35 @@ export default function OnScreenKeyboard({ isDark }) {
     pressKey(key);
   };
 
+  const iconSize = compact ? 16 : 20;
+  const keySize = compact
+    ? "min-w-[22px] max-w-[28px] h-6 sm:h-7 text-[10px] sm:text-xs"
+    : "min-w-[28px] max-w-[36px] h-8 sm:h-9 text-xs sm:text-sm";
+
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-md rounded-2xl bg-white/30 backdrop-blur-lg shadow-2xl border border-white/40 p-2 sm:p-4 overflow-hidden box-border">
-        <div className="space-y-1 px-0 sm:px-2 mt-0">
+      <div
+        className={`w-full rounded-2xl bg-white/30 backdrop-blur-lg shadow-2xl border border-white/40 overflow-hidden box-border ${
+          compact ? "max-w-[260px] p-1.5 sm:p-2" : "max-w-md p-2 sm:p-4"
+        }`}
+      >
+        <div
+          className={`space-y-0.5 px-0 sm:px-1 ${compact ? "" : "sm:px-2"} mt-0`}
+        >
           {KEYS.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center gap-1">
+            <div
+              key={rowIndex}
+              className="flex justify-center gap-0.5 sm:gap-1"
+            >
               {row.map((key) => {
                 let displayKey = key;
                 let isSpecial = false;
                 if (key === "ENTER") {
-                  displayKey = <FaLongArrowAltRight size={20} />;
+                  displayKey = <FaLongArrowAltRight size={iconSize} />;
                   isSpecial = true;
                 }
                 if (key === "BACKSPACE") {
-                  displayKey = <MdBackspace size={20} />;
+                  displayKey = <MdBackspace size={iconSize} />;
                   isSpecial = true;
                 }
                 return (
@@ -47,7 +61,6 @@ export default function OnScreenKeyboard({ isDark }) {
                       ${getKeyColor(key)}
                       ${isDark ? "text-white" : "text-black"}
                       font-semibold
-                      text-xs sm:text-sm
                       rounded-lg
                       shadow
                       border ${
@@ -58,7 +71,7 @@ export default function OnScreenKeyboard({ isDark }) {
                       transition-all duration-200
                       flex-1 flex items-center justify-center
                       aspect-square
-                      min-w-[28px] max-w-[36px] h-8 sm:h-9
+                      ${keySize}
                       ${isSpecial ? "px-0" : "px-1"}
                     `}
                     style={{

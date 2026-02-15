@@ -5,6 +5,7 @@ export default function HintCard({
   hints = ["This is hint one.", "This is hint two."],
   isDark,
   availableHintCount = 0,
+  compact = false,
 }) {
   const [visibleHints, setVisibleHints] = useState(0);
 
@@ -22,10 +23,20 @@ export default function HintCard({
 
   return (
     <div
-      className={`relative p-4 sm:p-5 rounded-2xl border shadow-md backdrop-blur-md transition-colors duration-300 ${cardStyle}`}
+      className={`relative rounded-2xl border shadow-md backdrop-blur-md transition-colors duration-300 ${cardStyle} ${
+        compact ? "p-2 sm:p-3" : "p-4 sm:p-5"
+      }`}
     >
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold">💡 Hint</h2>
+      <div
+        className={`flex items-center justify-between ${compact ? "mb-1.5" : "mb-3"}`}
+      >
+        <h2
+          className={
+            compact ? "text-sm font-semibold" : "text-lg font-semibold"
+          }
+        >
+          💡 Hint
+        </h2>
         <button
           onClick={revealHint}
           disabled={!hintAvailable}
@@ -35,7 +46,7 @@ export default function HintCard({
           }`}
         >
           <Lightbulb
-            size={22}
+            size={compact ? 18 : 22}
             className={`transition-colors duration-300 ${
               hintAvailable ? "text-yellow-400 drop-shadow-md" : "text-gray-500"
             }`}
@@ -43,11 +54,13 @@ export default function HintCard({
         </button>
       </div>
 
-      <div className="space-y-2">
+      <div className={compact ? "space-y-1" : "space-y-2"}>
         {hints.slice(0, visibleHints).map((hint, idx) => (
           <p
             key={idx}
-            className="text-sm sm:text-base leading-snug border-l-4 pl-2 border-yellow-300 animate-fade-in"
+            className={`leading-snug border-l-4 pl-2 border-yellow-300 animate-fade-in ${
+              compact ? "text-xs sm:text-sm" : "text-sm sm:text-base"
+            }`}
           >
             Hint {idx + 1}: {hint}
           </p>

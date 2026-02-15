@@ -48,6 +48,8 @@ export default function GameBoard({
   isDark,
   useDailyWord = false,
   isGuest = false,
+  compactHint = false,
+  denseDesktop = false,
 }) {
   const [targetWord, setTargetWord] = useState("");
   const [guesses, setGuesses] = useState([]);
@@ -191,10 +193,17 @@ export default function GameBoard({
 
   const hints = targetWord ? getWordHint(targetWord) : [];
 
+  const isDense = compactHint || denseDesktop;
   return (
-    <div className="w-full flex flex-col items-center gap-10">
-      <div className="relative flex flex-col items-center justify-center w-full max-w-md mx-auto rounded-2xl bg-white/20 backdrop-blur-md shadow-xl border border-white/30 p-4 sm:p-8">
-        <div className="space-y-1 sm:space-y-3 w-full">
+    <div
+      className={`w-full flex flex-col items-center ${isDense ? "gap-2 sm:gap-3" : "gap-8 md:gap-10"} ${denseDesktop ? "max-w-md" : ""}`}
+    >
+      <div
+        className={`relative flex flex-col items-center justify-center w-full mx-auto rounded-2xl bg-white/20 backdrop-blur-md shadow-xl border border-white/30 ${denseDesktop ? "p-2 sm:p-4" : "p-3 sm:p-6 md:p-8"} max-w-md`}
+      >
+        <div
+          className={`w-full ${isDense ? "space-y-0.5 sm:space-y-1" : "space-y-1 sm:space-y-3"}`}
+        >
           {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => {
             if (i < guesses.length) {
               return <GuessRow key={i} guess={guesses[i]} animate={true} />;
@@ -220,11 +229,12 @@ export default function GameBoard({
           </p>
         )}
       </div>
-      <div className="w-full max-w-md">
+      <div className={`w-full ${denseDesktop ? "max-w-md" : "max-w-md"}`}>
         <HintCard
           hints={hints}
           availableHintCount={availableHintCount}
           isDark={isDark}
+          compact={denseDesktop}
         />
       </div>
     </div>
