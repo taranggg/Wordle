@@ -1,83 +1,94 @@
-# 🚧 Announcement: Improved Version Coming Soon! 🚧
-
-We are excited to announce that a brand new, improved version of Wordle is launching soon! The current site is temporarily down as we prepare to release an all-new UI and enhanced user experience. Stay tuned for updates!
-
----
-
 # Wordle Game
 
-Wordle is a fun and challenging word puzzle game where players try to guess a hidden five-letter word within six attempts. Each guess must be a valid five-letter English word, and after each guess, the game provides feedback to help you get closer to the answer.
+A full-stack Wordle-style word puzzle game with a **TypeScript** backend and **TypeScript** React frontend.
 
-## How to Play
+## Stack
 
-1. **Guess the Word:**  
-   Enter a valid five-letter word and submit your guess.
+- **Backend:** Node.js, Express, TypeScript, MongoDB (Mongoose)
+- **Frontend:** React 19, Vite, TypeScript, Tailwind CSS, Framer Motion
 
-2. **Feedback:**
-
-   - Letters in the correct position are highlighted in green.
-   - Letters that are in the word but in the wrong position are highlighted in yellow.
-   - Letters not in the word are shown in gray.
-
-3. **Attempts:**  
-   You have six tries to guess the correct word.
-
-4. **Hints:**  
-   Use up to two hints per game to help you solve the puzzle.
-
-5. **Leaderboard:**  
-   Compete with other players and see your ranking on the leaderboard.
-
-6. **Game History:**  
-   Track your wins and losses in your personal game history.
-
-## Features
-
-- Modern, responsive UI built with React and Tailwind CSS
-- Real-time input validation and feedback
-- On-screen virtual keyboard for easy guessing
-- Hints system to assist players
-- Leaderboard and user profiles
-- Secure authentication and user management
-
-## Project Structure
+## Project structure
 
 ```
 Wordle/
-├── public/
-├── src/
-│   ├── components/
-│   ├── util/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── ...
-├── tailwind.config.js
-├── vite.config.js
-├── package.json
+├── server/                 # Backend (TypeScript)
+│   ├── src/
+│   │   ├── config/         # env, db
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── scripts/
+│   │   ├── utils/
+│   │   └── index.ts
+│   ├── config/             # config.env
+│   └── package.json
+├── Wordle2/                # Frontend (TypeScript)
+│   ├── src/
+│   │   ├── api/
+│   │   ├── assets/
+│   │   ├── auth/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   └── package.json
 └── README.md
 ```
 
-## Getting Started
+## Getting started
 
-1. **Install dependencies:**
+### 1. Backend
 
-   ```sh
-   npm install
-   ```
+See [server/README.md](server/README.md) for MongoDB setup and env vars.
 
-2. **Run the development server:**
+```bash
+cd server
+npm install
+# Add config/config.env (see config.env.example)
+npm run dev
+```
 
-   ```sh
-   npm run dev
-   ```
+API runs at `http://localhost:5000`.
 
-3. **Open your browser and visit:**
-   ```
-   http://localhost:5173
-   ```
+### 2. Frontend
+
+```bash
+cd Wordle2
+npm install
+npm run dev
+```
+
+App runs at `http://localhost:5173`. Set `VITE_API_URL` to your API URL if different from `http://localhost:5000`.
+
+### 3. Production build
+
+**Server:**
+
+```bash
+cd server
+npm run build
+npm start
+```
+
+**Client:**
+
+```bash
+cd Wordle2
+npm run build
+# Serve the dist/ folder (e.g. with a static host or your backend)
+```
+
+## How to play
+
+- Guess the hidden five-letter word in six attempts.
+- Green = correct letter and position; yellow = letter in word, wrong position; gray = letter not in word.
+- Use hints, view leaderboard and game history when signed in.
 
 ---
 
-# 🚧 Announcement: Improved Version Coming Soon! 🚧
-
-The Wordle site is currently down as we work on a major update. The new version will feature a completely redesigned UI and a much better user experience. Thank you for your patience and stay tuned for the relaunch!
+© Wordle. All rights reserved.

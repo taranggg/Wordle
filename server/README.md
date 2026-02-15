@@ -1,4 +1,6 @@
-# Wordle API Server
+# Wordle API Server (TypeScript)
+
+Backend is built with **TypeScript**, Express, and Mongoose. Source lives in `src/`.
 
 ## MongoDB setup (start fresh)
 
@@ -59,13 +61,13 @@ From the `server` folder:
 
 ```bash
 npm install
-npm run server
+npm run dev
 ```
 
 You should see:
 
 - `Connected to MongoDB: ...`
-- `Server is running on port 5000`
+- `Server running on port 5000`
 
 The app will create the `wordle` database and an admin user on first run.
 
